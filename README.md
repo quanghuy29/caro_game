@@ -1,19 +1,19 @@
 # caro_game
 Thiết kế giao thức:
 - Cấu trúc playerInfo:
- + char username[]
- + int score;
- + int rank;
+ 	+ char username[]
+ 	+ int score;
+ 	+ int rank;
 - Cấu trúc Player:
- + SOCKET s;
- + char IPAddress;
- + char portAddress;
- + playerInfo playerinfo;
- + bool isFree;
+ 	+ SOCKET s;
+ 	+ char IPAddress;
+ 	+ char portAddress;
+ 	+ playerInfo playerinfo;
+ 	+ bool isFree;
 - Cấu trúc sessionInfo:
- + Player player1;
- + Player player2;
- + int a[][] = 0;
+ 	+ Player player1;
+ 	+ Player player2;
+ 	+ int a[][] = 0;
 - Khuôn dạng thông điệp: OPCODE | LENGTH | PAYLOAD
   + Opcode: Mã thao tác(1 byte)
 	1: Gửi lời thách đấu
