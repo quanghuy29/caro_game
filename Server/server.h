@@ -15,32 +15,32 @@
 #define SERVER_PORT 5500
 #define MAX_CLIENT 1024
 #define BUFF_SIZE 2048
+#define NAME_SIZE 20
+#define LENGTH 3
+#define CHALLENGE '1'
+#define ACCEPT '2'
+#define REFUSE '3'
+#define STEP '4'
+#define RESULT '5'
+#define ERR '6'
 
-int init(SOCKET listenSock, sockaddr_in serverAddr, char serverIP[], int serverPort) {
-	WSADATA wsaData;
-	WORD ver = MAKEWORD(2, 2);
-	WSAStartup(ver, &wsaData);
+typedef struct {
+	char username[NAME_SIZE];
+	int score;
+	int rank;
+} playerInfo;
 
-	listenSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (listenSock == INVALID_SOCKET) {
-		printf("Error cannot create server socket\n");
-		return 0;
-	}
+typedef struct {
+	SOCKET s;
+	char IPAddress[INET_ADDRSTRLEN];
+	char portAddress[7];
+	playerInfo playerinfo;
+	bool isFree;
+} Player;
 
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(serverPort);
-	inet_pton(AF_INET, serverIP, &serverAddr.sin_addr);
-
-	if (bind(listenSock, (sockaddr*)&serverAddr, sizeof serverAddr)) {
-		printf("Error cannot bind address to server\n");
-		return 0;
-	}
-
-	if (listen(listenSock, MAX_CLIENT)) {
-		printf("Error cannor place server in state LISTEN\n");
-		return 0;
-	}
-
-	printf("Server started!\n");
-	return 1;
-}
+typedef struct {
+	Player player1;
+	Player player2;
+	int a[LENGTH][LENGTH] = { 0 };
+};
+int init(SOCKET listenSock, sockaddr_in serverAddr, char serverIP[], int serverPort);
