@@ -16,7 +16,9 @@ namespace Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            FormStart formstart = new FormStart();
+            Application.Run(formstart);
         }
     }
 }
