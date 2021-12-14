@@ -22,6 +22,9 @@ Thiết kế giao thức:
 	*4: Truyền thông tin nước đi
 	*5: Báo kết quả ván đấu
 	*6: Báo lỗi
+	*7: Đăng nhập
+	*8: Đăng xuất
+	*9: Gửi danh sách người chơi
   + Length: kích thước trong payload(2 byte)
   + Payload: dữ liệu
 	* Opcode = 1 và 2, 3, payload chứa tên tài khoản
@@ -43,3 +46,6 @@ Ng chơi 2 bắt đầu sau, đợi nhận được thông điệp nước đi m
 	+ b5: server mỗi nước đi sẽ đánh dấu vào mảng a, a=1 tức là vị trí dc danh bởi ng chơi 1 và ngược lại. Đồng thời kiểm tra nước đi có thắng hay không. Không có thì tiếp tục truyền. Nếu có thì lập tức truyền thông điệp báo kết quả tới cả 2. Cập nhật điểm và hạng cho ng chơi.
 Hoặc nhận được thông điệp opcode 4, length 0 thì cũng báo kết quả và cập nhật điểm.
 Sau đó sẽ xoá phiên
+- Khi một người chơi đăng nhập:
+	+ b1: client nhập tên đăng nhập và chọn Enter, sẽ gửi cho server thông điệp opcode 7, payload tên đăng nhập. Thành công server gửi opcode 7, length = 0. Thất bại gửi opcode 6, payload 3. 
+	+ b2: Server cập nhật lại danh sách người chơi và gửi cho tất cả các client.
