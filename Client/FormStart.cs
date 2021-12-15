@@ -12,9 +12,14 @@ namespace Client
 {
     public partial class FormStart : Form
     {
+        StartViewManager startView;
+        SocketManager client;
+
         public FormStart() {
             InitializeComponent();
-        }
+
+            client = new SocketManager();
+        }    
 
         private void exitButton_Click(object sender, EventArgs e) {
             Application.Exit();
@@ -23,9 +28,15 @@ namespace Client
         private void loginButton_Click(object sender, EventArgs e) {
             if (!String.IsNullOrEmpty(userNameBox.Text))
             {
-                string name = userNameBox.Text;
-                FormPlay formPlay = new FormPlay(name);
-                formPlay.ShowDialog();
+                if (client.connectServer())
+                {
+                    MessageBox.Show("Connected!");
+                    startView = new StartViewManager(userNameBox);
+                    startView.showListPlayer(listPlayer);
+                    startView.showPanelChallenge(panelChallenge);
+                }
+                else MessageBox.Show("Login failed!");
+                
             }
             else
             {

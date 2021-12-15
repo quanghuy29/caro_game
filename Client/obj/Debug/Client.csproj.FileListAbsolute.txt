@@ -9,5 +9,5 @@
 \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\x64\Debug\Client.exe
 \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\x64\Debug\Client.pdb
 \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Client\obj\Debug\Client.FormPlay.resources
-\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Client\obj\Debug\Client.FormStart.resources
 \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Client\obj\Debug\Client.FormStart.resources

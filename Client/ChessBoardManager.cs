@@ -19,7 +19,6 @@ namespace Client
             get {
                 return chessBoard;
             }
-
             set {
                 chessBoard = value;
             }
@@ -29,7 +28,6 @@ namespace Client
             get {
                 return player;
             }
-
             set {
                 player = value;
             }
@@ -39,7 +37,6 @@ namespace Client
             get {
                 return currentPlayer;
             }
-
             set {
                 currentPlayer = value;
             }
@@ -49,13 +46,12 @@ namespace Client
             get {
                 return namePlayer;
             }
-
             set {
                 namePlayer = value;
             }
         }
 
-        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, string name)
+        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, string name1, string name2)
         {
             this.ChessBoard = chessBoard;
             this.NamePlayer = new List<TextBox>()
@@ -63,8 +59,9 @@ namespace Client
                 namePlayer1,
                 namePlayer2
             };
-            NamePlayer[0].Text = name;
-            NamePlayer[1].Text = "NEU";
+            NamePlayer[0].Text = name1;
+            NamePlayer[1].Text = name2;
+            
             this.Player = new List<Player>() {
                 new Player(this.NamePlayer[0].Text, Image.FromFile(Application.StartupPath + "\\imagine\\x.png")),
                 new Player(this.NamePlayer[1].Text, Image.FromFile(Application.StartupPath + "\\imagine\\o.png"))

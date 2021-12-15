@@ -13,13 +13,15 @@ namespace Client
     public partial class FormPlay : Form
     {
         ChessBoardManager chessBoard;
-        public FormPlay(string name)
+        public FormPlay(string name1, string name2)
         {
             InitializeComponent();
-            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, name);
-            chessBoard.drawBoard(panelBoard);
-            
+            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, name1, name2);
+            chessBoard.drawBoard(panelBoard);            
         }
 
+        private void surrondButton_Click(object sender, EventArgs e) {
+            this.Close();
+        }
     }
 }
