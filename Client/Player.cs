@@ -16,7 +16,9 @@ namespace Client
             get { return name; }
             set { name = value; }
         }
+
         private Image mark;
+
         public Image Mark
         {
             get { return mark;}

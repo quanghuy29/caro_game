@@ -22,6 +22,7 @@ namespace Client
         }    
 
         private void exitButton_Click(object sender, EventArgs e) {
+            client.closeSocket();
             Application.Exit();
         }
 
@@ -31,9 +32,17 @@ namespace Client
                 if (client.connectServer())
                 {
                     MessageBox.Show("Connected!");
-                    startView = new StartViewManager(userNameBox);
+
+                    Message mess = new Message("1", "02", userNameBox.Text);
+
+                    client.sendData(mess.convertToString());
+
+                    startView = new StartViewManager(userNameBox, this.client);
                     startView.showListPlayer(listPlayer);
                     startView.showPanelChallenge(panelChallenge);
+
+                    Button loginButt = sender as Button;
+                    loginButt.Visible = false;
                 }
                 else MessageBox.Show("Login failed!");
                 

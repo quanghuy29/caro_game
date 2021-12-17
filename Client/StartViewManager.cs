@@ -12,6 +12,7 @@ namespace Client
     {
         private List<TextBox> namePlayer;
         private Label labelChallenge;
+        SocketManager client;
 
         public List<TextBox> NamePlayer {
             get {
@@ -33,7 +34,7 @@ namespace Client
             }
         }
 
-        public StartViewManager(TextBox name1) {
+        public StartViewManager(TextBox name1, SocketManager client) {
             LabelChallenge = new Label()
             {
                 Text = "Enter name player: ",
@@ -44,7 +45,7 @@ namespace Client
                 name1,
                 new TextBox() { Location = new Point(0, LabelChallenge.Location.Y + LabelChallenge.Height) }
             };
-            
+            this.client = client;
         }
 
         public void showListPlayer(ListView listPlayer) {
@@ -72,7 +73,7 @@ namespace Client
             string name1 = NamePlayer[0].Text;
             string name2 = NamePlayer[1].Text;
 
-            FormPlay formPlay = new FormPlay(name1, name2);
+            FormPlay formPlay = new FormPlay(name1, name2, this.client);
             formPlay.ShowDialog();
         }
     }

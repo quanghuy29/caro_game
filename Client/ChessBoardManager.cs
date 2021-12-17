@@ -7,13 +7,12 @@ namespace Client
 {
     public class ChessBoardManager
     {
-        private Panel chessBoard;
-        
-        private List<Player> player;
-        
+        private Panel chessBoard;        
+        private List<Player> player;      
         private int currentPlayer;
-
         private List<TextBox> namePlayer;
+        SocketManager client;
+        private Message message;
 
         public Panel ChessBoard {
             get {
@@ -51,14 +50,26 @@ namespace Client
             }
         }
 
-        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, string name1, string name2)
+        public Message Message {
+            get {
+                return message;
+            }
+
+            set {
+                message = value;
+            }
+        }
+
+        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, string name1, string name2, SocketManager client)
         {
+            this.client = client;
             this.ChessBoard = chessBoard;
             this.NamePlayer = new List<TextBox>()
             {
                 namePlayer1,
                 namePlayer2
             };
+
             NamePlayer[0].Text = name1;
             NamePlayer[1].Text = name2;
             
@@ -75,16 +86,17 @@ namespace Client
         public void drawBoard(Panel boardChess)
         {
             Button oldButton = new Button() { Width = 0, Location = new Point(0, 0) };
-            for (int i = 0; i < Cons.BOARD; i++)
+            for (int i = 0; i < Cons.BOARD_SIZE; i++)
             {
-                for (int j = 0; j < Cons.BOARD + 1; j++)
+                for (int j = 0; j < Cons.BOARD_SIZE + 1; j++)
                 {
                     Button btn = new Button()
                     {
                         Width = Cons.BUTTON_WIDTH,
                         Height = Cons.BUTTON_HEIGHT,
                         Location = new Point(oldButton.Location.X + oldButton.Width, oldButton.Location.Y),
-                        BackgroundImageLayout = ImageLayout.Stretch
+                        BackgroundImageLayout = ImageLayout.Stretch,
+                        Tag = i.ToString(Cons.SAMPLE) + j.ToString(Cons.SAMPLE)
                     };
                     btn.Click += Btn_Click;
                     boardChess.Controls.Add(btn);
@@ -101,6 +113,12 @@ namespace Client
             Button btn = sender as Button;
             if (btn.BackgroundImage != null)
                 return;
+
+            Point point = getChessPoint(btn);
+            Message = new Message("1", "02", point.X, point.Y);
+            client.sendData(Message.convertToString());
+
+            
             btn.BackgroundImage = Player[CurrentPlayer].Mark;
 
             NamePlayer[CurrentPlayer].BackColor = Color.White;
@@ -108,6 +126,13 @@ namespace Client
 
             NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
 
+        }
+
+        public Point getChessPoint(Button btn) {
+            int x = Convert.ToInt32(btn.Tag.ToString().Substring(0, Cons.LOCATION_SIZE));
+            int y = Convert.ToInt32(btn.Tag.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
+            Point point = new Point(x, y);
+            return point;
         }
     }
 }

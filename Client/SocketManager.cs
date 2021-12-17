@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,12 +11,10 @@ namespace Client
 {
     public class SocketManager
     {
-        public string IP = "127.0.0.1";
-        public int port = 5500;
         Socket client;
 
         public bool connectServer() {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(IP), port);
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(Cons.IP), Cons.port);
             client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             try
@@ -27,6 +26,24 @@ namespace Client
             {
                 return false;
             }
+        }
+
+        public void closeSocket() {
+            client.Close();
+        }
+
+        public int sendData(string data) {
+            var sendBuffer = Encoding.ASCII.GetBytes(data);
+            int ret = client.Send(sendBuffer);
+            //client.Shutdown(SocketShutdown.Send);
+            return ret;
+        }
+
+        public int receiveData(string rcvBuff) {
+            byte[] receiveBuffer = new byte[Cons.BUFFER_SIZE];
+            int length = client.Receive(receiveBuffer);
+            rcvBuff = Encoding.ASCII.GetString(receiveBuffer, 0, length);
+            return length;
         }
     }
 }
