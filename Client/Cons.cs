@@ -20,5 +20,15 @@ namespace Client
         public static string IP = "127.0.0.1";
         public static int port = 5500;
         public static int BUFFER_SIZE = 1024;
+
+        public static string LOGIN = "1";
+        public static string LIST = "2";
+        public static string CHALLENGE = "3";
+        public static string ACCEPT = "4";
+        public static string REFUSE = "5";
+        public static string MOVE = "6";
+        public static string RESULT = "7";
+        public static string ERROR = "8";
+        public static string LOGOUT = "9";
     }
 }

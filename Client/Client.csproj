@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ChessBoardManager.cs" />
     <Compile Include="Cons.cs" />
+    <Compile Include="EventManager.cs" />
     <Compile Include="FormPlay.cs">
       <SubType>Form</SubType>
     </Compile>

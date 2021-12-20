@@ -20,8 +20,7 @@ namespace Client
             InitializeComponent();
             this.client = client;
             chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, name1, name2, client);
-            chessBoard.drawBoard(panelBoard);
-                 
+            chessBoard.drawBoard(panelBoard);                
         }
 
         private void surrondButton_Click(object sender, EventArgs e) {

@@ -13,6 +13,7 @@ namespace Client
         private List<TextBox> namePlayer;
         private Label labelChallenge;
         SocketManager client;
+        EventManager eventManager;
 
         public List<TextBox> NamePlayer {
             get {
@@ -38,14 +39,26 @@ namespace Client
             LabelChallenge = new Label()
             {
                 Text = "Enter name player: ",
-                Location = new Point(0, 0)
+                Location = new Point(10, 10),
             };
             NamePlayer = new List<TextBox>()
             {
                 name1,
-                new TextBox() { Location = new Point(0, LabelChallenge.Location.Y + LabelChallenge.Height) }
+                new TextBox() { Location = new Point(10, LabelChallenge.Location.Y + 2 * LabelChallenge.Height) }
             };
             this.client = client;
+            eventManager = new EventManager();
+
+            eventManager.Accept += EventManager_Accept;
+        }
+
+        private void EventManager_Accept(object sender, SuperEventArgs e) {
+            MessageBox.Show("Challenge accepted");
+            string name1 = NamePlayer[0].Text;
+            string name2 = e.ReturnName;
+            
+            FormPlay formPlay = new FormPlay(name1, name2, this.client);
+            formPlay.ShowDialog();
         }
 
         public void showListPlayer(ListView listPlayer) {
@@ -57,24 +70,31 @@ namespace Client
             Button buttonEnter = new Button()
             {
                 Text = "Challenge",
-                Location = new Point(0, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
+                Location = new Point(20, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
             };
 
             panelchallenge.Controls.Add(LabelChallenge);
             panelchallenge.Controls.Add(NamePlayer[1]);
             panelchallenge.Controls.Add(buttonEnter);
+            panelchallenge.Visible = true;
 
             buttonEnter.Click += ButtonEnter_Click;
         }
 
-        private void ButtonEnter_Click(object sender, EventArgs e) {
-            MessageBox.Show("Challenge accepted");
+        public void hideListPlayer(ListView listPlayer) {
+            listPlayer.Items.Clear();
+        }
 
-            string name1 = NamePlayer[0].Text;
-            string name2 = NamePlayer[1].Text;
+        public void hidePanelChallenge(Panel panelchallenge) {
+            panelchallenge.Visible = false;
+        }
 
-            FormPlay formPlay = new FormPlay(name1, name2, this.client);
-            formPlay.ShowDialog();
+        private void ButtonEnter_Click(object sender, EventArgs e) {                      
+            string name = NamePlayer[1].Text;
+
+            Message mess = new Message(Cons.CHALLENGE, name.Length.ToString(Cons.SAMPLE), name);
+            client.sendData(mess.convertToString());
+            client.Listen(eventManager);           
         }
     }
 }

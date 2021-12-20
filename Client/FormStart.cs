@@ -14,12 +14,20 @@ namespace Client
     {
         StartViewManager startView;
         SocketManager client;
+        EventManager eventManager;
 
         public FormStart() {
             InitializeComponent();
 
             client = new SocketManager();
-        }    
+            eventManager = new EventManager();
+            startView = new StartViewManager(userNameBox, this.client);
+
+            eventManager.Login += Notif_Login;
+
+            logoutButton.Visible = false;
+            panelChallenge.Visible = false;
+        }
 
         private void exitButton_Click(object sender, EventArgs e) {
             client.closeSocket();
@@ -31,26 +39,48 @@ namespace Client
             {
                 if (client.connectServer())
                 {
-                    MessageBox.Show("Connected!");
-
-                    Message mess = new Message("1", "02", userNameBox.Text);
-
-                    client.sendData(mess.convertToString());
-
-                    startView = new StartViewManager(userNameBox, this.client);
-                    startView.showListPlayer(listPlayer);
-                    startView.showPanelChallenge(panelChallenge);
-
-                    Button loginButt = sender as Button;
-                    loginButt.Visible = false;
+                    Message mess = new Message(Cons.LOGIN, userNameBox.Text.Length.ToString(Cons.SAMPLE), userNameBox.Text);             
+                    client.sendData(mess.convertToString());                   
+                    client.Listen(eventManager);                                                          
                 }
-                else MessageBox.Show("Login failed!");
-                
+                else MessageBox.Show("Connected failed!");               
             }
             else
             {
                 MessageBox.Show("Please enter name!!!");
             }
+        }
+
+        private void Notif_Login(object sender, SuperEventArgs e) {
+            if (e.ReturnCode == 1)
+            {
+                MessageBox.Show("Login successful!");
+
+                startView.showListPlayer(listPlayer);
+                startView.showPanelChallenge(panelChallenge);
+
+                loginButton.Visible = false;
+                logoutButton.Visible = true;
+                userNameBox.ReadOnly = true;
+            }
+            else
+            {
+                MessageBox.Show("Login failed!");
+                client.closeSocket();
+            }
+        }
+
+        private void logoutButton_Click(object sender, EventArgs e) {
+            loginButton.Visible = true;
+            logoutButton.Visible = false;
+            userNameBox.ReadOnly = false;
+
+            Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE, "");
+            client.sendData(mess.convertToString());
+            client.closeSocket();
+
+            startView.hideListPlayer(listPlayer);
+            startView.hidePanelChallenge(panelChallenge);
         }
     }
 }
