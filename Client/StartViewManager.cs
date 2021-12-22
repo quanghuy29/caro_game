@@ -49,16 +49,20 @@ namespace Client
             this.client = client;
             eventManager = new EventManager();
 
-            eventManager.Accept += EventManager_Accept;
+            eventManager.Respone += EventManager_Respone;
         }
 
-        private void EventManager_Accept(object sender, SuperEventArgs e) {
-            MessageBox.Show("Challenge accepted");
-            string name1 = NamePlayer[0].Text;
-            string name2 = e.ReturnName;
-            
-            FormPlay formPlay = new FormPlay(name1, name2, this.client);
-            formPlay.ShowDialog();
+        private void EventManager_Respone(object sender, SuperEventArgs e) {
+            if (e.ReturnCode == (int)Cons.command.ACCEPT)
+            {
+                MessageBox.Show("Challenge accepted!");
+                string name1 = NamePlayer[0].Text;
+                string name2 = e.ReturnName;
+
+                FormPlay formPlay = new FormPlay(name1, name2, this.client);
+                formPlay.ShowDialog();
+            }
+            else MessageBox.Show("Challenge refuse!");
         }
 
         public void showListPlayer(ListView listPlayer) {

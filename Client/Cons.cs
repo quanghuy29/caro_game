@@ -30,5 +30,18 @@ namespace Client
         public static string RESULT = "7";
         public static string ERROR = "8";
         public static string LOGOUT = "9";
+
+        public enum command
+        {
+            LOGIN = 1,
+            LIST = 2,
+            CHALLENGE = 3,
+            ACCEPT = 4,
+            REFUSE = 5,
+            MOVE = 6,
+            RESULT = 7,
+            ERROR = 8,
+            LOGOUT = 9
+        }
     }
 }

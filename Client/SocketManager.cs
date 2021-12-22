@@ -70,52 +70,41 @@ namespace Client
         private void processData(string mess, EventManager eventManager) {
             Message rcvMess = new Message(mess);
 
-            string opcode = rcvMess.Opcode;
+            int opcode = Convert.ToInt32(rcvMess.Opcode);
             string payload = rcvMess.Payload;
 
-            if(String.Compare(opcode, Cons.LOGIN) == 0)
+            switch (opcode)
             {
-                if (String.Compare(payload, "1") == 0) eventManager.notifLogin(1);
-                else eventManager.notifLogin(0);
+                case (int)Cons.command.LOGIN:
+                    if (String.Compare(payload, "1") == 0) eventManager.notifLogin(1);
+                    else eventManager.notifLogin(0);
+                    break;
+                case (int)Cons.command.LIST:
+                    break;
+                case (int)Cons.command.CHALLENGE:
+                    break;
+                case (int)Cons.command.ACCEPT:
+                    eventManager.notifRespone(opcode, payload);
+                    break;
+                case (int)Cons.command.REFUSE:
+                    eventManager.notifRespone(opcode, payload);
+                    break;
+                case (int)Cons.command.MOVE:
+                    eventManager.notifMove(payload);
+                    break;
+                case (int)Cons.command.RESULT:
+                    eventManager.notifResult(payload);
+                    break;
+                case (int)Cons.command.ERROR:
+                    break;
+                case (int)Cons.command.LOGOUT:
+                    break;
+                default:
+                    Message messError = new Message(Cons.ERROR, Cons.SAMPLE, "");
+                    sendData(messError.convertToString());
+                    ListenThread(eventManager);
+                    break;
             }
-            else if (String.Compare(opcode, Cons.LIST) == 0)
-            {
-
-            }
-            else if (String.Compare(opcode, Cons.CHALLENGE) == 0)
-            {
-
-            }
-            else if (String.Compare(opcode, Cons.ACCEPT) == 0)
-            {
-                eventManager.notifChallenge(payload);
-            }
-            else if (String.Compare(opcode, Cons.REFUSE) == 0)
-            {
-
-            }
-            else if (String.Compare(opcode, Cons.MOVE) == 0)
-            {
-                eventManager.notifMove(payload);
-            }
-            else if (String.Compare(opcode, Cons.RESULT) == 0)
-            {
-
-            }
-            else if (String.Compare(opcode, Cons.ERROR) == 0)
-            {
-
-            }
-            else if (String.Compare(opcode, Cons.LOGOUT) == 0)
-            {
-
-            }
-            else
-            {
-                Message messError = new Message(Cons.ERROR, Cons.SAMPLE, "");
-                sendData(messError.convertToString());
-                Listen(eventManager);
-            }
-        }       
+        }
     }
 }

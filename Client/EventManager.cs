@@ -10,8 +10,9 @@ namespace Client
     public class EventManager
     {
         private event EventHandler<SuperEventArgs> _login;
-        private event EventHandler<SuperEventArgs> _accept;
+        private event EventHandler<SuperEventArgs> _respone;
         private event EventHandler<SuperEventArgs> _move;
+        private event EventHandler<SuperEventArgs> _result;
 
         public event EventHandler<SuperEventArgs> Login {
             add {
@@ -22,12 +23,21 @@ namespace Client
             }
         }
 
-        public event EventHandler<SuperEventArgs> Accept {
+        public event EventHandler<SuperEventArgs> Respone {
             add {
-                _accept += value;
+                _respone += value;
             }
             remove {
-                _accept -= value;
+                _respone -= value;
+            }
+        }
+
+        public event EventHandler<SuperEventArgs> Result {
+            add {
+                _result += value;
+            }
+            remove {
+                _result -= value;
             }
         }
 
@@ -45,14 +55,19 @@ namespace Client
                 _login(this, new SuperEventArgs(result));
         }
 
-        public void notifChallenge(string name) {
-            if (_accept != null)
-                _accept(this, new SuperEventArgs(name));
+        public void notifRespone(int code, string name) {
+            if (_respone != null)
+                _respone(this, new SuperEventArgs(code, name));
         }
 
         public void notifMove(string move) {
             if (_move != null)
                 _move(this, new SuperEventArgs(move));
+        }
+
+        public void notifResult(string name) {
+            if (_result != null)
+                _result(this, new SuperEventArgs(name));
         }
     }
 
@@ -67,6 +82,11 @@ namespace Client
 
         public SuperEventArgs(string returnName) {
             this.ReturnName = returnName;
+        }
+
+        public SuperEventArgs(int returnCode, string returnName) {
+            this.returnCode = returnCode;
+            this.returnName = returnName;
         }
 
         public int ReturnCode {
