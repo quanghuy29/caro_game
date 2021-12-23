@@ -21,9 +21,10 @@ namespace Client
 
             client = new SocketManager();
             eventManager = new EventManager();
-            startView = new StartViewManager(userNameBox, this.client);
+            startView = new StartViewManager(userNameBox, this.client, this.eventManager);
 
             eventManager.Login += Notif_Login;
+            eventManager.Respone += EventManager_Respone;
 
             logoutButton.Visible = false;
             panelChallenge.Visible = false;
@@ -38,6 +39,7 @@ namespace Client
             if (!String.IsNullOrEmpty(userNameBox.Text))
             {
                 userNameBox.ReadOnly = true;
+                loginButton.Enabled = false;
                 if (client.connectServer())
                 {
                     Message mess = new Message(Cons.LOGIN, userNameBox.Text.Length.ToString(Cons.SAMPLE), userNameBox.Text);
@@ -48,6 +50,7 @@ namespace Client
                 {
                     MessageBox.Show("Connected failed!");
                     userNameBox.ReadOnly = false;
+                    loginButton.Enabled = true;
                 }               
             }
             else
@@ -58,6 +61,7 @@ namespace Client
 
         private void logoutButton_Click(object sender, EventArgs e) {
             loginButton.Visible = true;
+            loginButton.Enabled = true;
             logoutButton.Visible = false;
             userNameBox.ReadOnly = false;
 
@@ -85,8 +89,24 @@ namespace Client
                 {
                     MessageBox.Show("Login failed!");
                     userNameBox.ReadOnly = false;
+                    loginButton.Enabled = true;
                     client.closeSocket();
                 }
+            }));
+        }
+
+        private void EventManager_Respone(object sender, SuperEventArgs e) {
+            this.Invoke((MethodInvoker)(() => {
+                if (e.ReturnCode == (int)Cons.command.ACCEPT)
+                {
+                    MessageBox.Show("Challenge accepted!");
+                    string name1 = userNameBox.Text;
+                    string name2 = e.ReturnName;
+
+                    FormPlay formPlay = new FormPlay(name1, name2, this.client, eventManager);
+                    formPlay.ShowDialog();
+                }
+                else MessageBox.Show("Challenge refuse!");
             }));
         }
     }

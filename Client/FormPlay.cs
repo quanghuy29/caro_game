@@ -16,17 +16,23 @@ namespace Client
         SocketManager client;
         EventManager eventManager;
 
-        public FormPlay(string name1, string name2, SocketManager client)
+        public FormPlay(string name1, string name2, SocketManager client, EventManager eventManager)
         {
             InitializeComponent();
+
+            namePlayer1.Text = name1;
+            namePlayer2.Text = name2;
+
             this.client = client;
-            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, name1, name2, client);
+            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, client, eventManager);
             chessBoard.drawBoard(panelBoard);
 
-            eventManager = new EventManager();
-            eventManager.Result += EventManager_Result;
+            this.eventManager = eventManager;
+            this.eventManager.Result += EventManager_Result;
 
             client.ListenThread(eventManager);
+
+            this.ControlBox = false;
         }
 
         private void EventManager_Result(object sender, SuperEventArgs e) {
@@ -44,10 +50,13 @@ namespace Client
             this.Close();
         }
 
-        private void surrondButton_Click(object sender, EventArgs e) {
-            Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
-            client.sendData(mess.convertToString());
-
+        private void surrenderButton_Click(object sender, EventArgs e) {
+            DialogResult dialogResult = MessageBox.Show("Do you want surrender?", "Question", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
+                client.sendData(mess.convertToString());
+            }         
         }
     }
 }

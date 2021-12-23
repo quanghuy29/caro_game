@@ -62,7 +62,10 @@ namespace Client
 
         public void notifMove(string move) {
             if (_move != null)
+            {
                 _move(this, new SuperEventArgs(move));
+            }
+               
         }
 
         public void notifResult(string name) {

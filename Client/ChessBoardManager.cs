@@ -72,7 +72,7 @@ namespace Client
             }
         }
 
-        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, string name1, string name2, SocketManager client)
+        public ChessBoardManager(Panel chessBoard, TextBox namePlayer1, TextBox namePlayer2, SocketManager client, EventManager eventManager)
         {
             this.client = client;
             this.ChessBoard = chessBoard;
@@ -81,17 +81,14 @@ namespace Client
                 namePlayer1,
                 namePlayer2
             };
-
-            NamePlayer[0].Text = name1;
-            NamePlayer[1].Text = name2;
             
             this.Player = new List<Player>() {
                 new Player(this.NamePlayer[0].Text, Image.FromFile(Application.StartupPath + "\\imagine\\x.png")),
                 new Player(this.NamePlayer[1].Text, Image.FromFile(Application.StartupPath + "\\imagine\\o.png"))
             };
 
-            this.eventManager = new EventManager();
-            eventManager.Move += EventManager_Move;
+            this.eventManager = eventManager;
+            this.eventManager.Move += EventManager_Move;
             CurrentPlayer = 0;
             NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
         }
@@ -152,6 +149,7 @@ namespace Client
             Mark(btn);
 
             changPlayer();
+
             chessBoard.Enabled = false;
             client.ListenThread(eventManager);            
         }

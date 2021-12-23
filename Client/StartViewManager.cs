@@ -35,7 +35,7 @@ namespace Client
             }
         }
 
-        public StartViewManager(TextBox name1, SocketManager client) {
+        public StartViewManager(TextBox name1, SocketManager client, EventManager eventManager) {
             LabelChallenge = new Label()
             {
                 Text = "Enter name player: ",
@@ -47,23 +47,9 @@ namespace Client
                 new TextBox() { Location = new Point(10, LabelChallenge.Location.Y + 2 * LabelChallenge.Height) }
             };
             this.client = client;
-            eventManager = new EventManager();
-
-            eventManager.Respone += EventManager_Respone;
-        }
-
-        private void EventManager_Respone(object sender, SuperEventArgs e) {
-            if (e.ReturnCode == (int)Cons.command.ACCEPT)
-            {
-                MessageBox.Show("Challenge accepted!");
-                string name1 = NamePlayer[0].Text;
-                string name2 = e.ReturnName;
-
-                FormPlay formPlay = new FormPlay(name1, name2, this.client);
-                formPlay.ShowDialog();
-            }
-            else MessageBox.Show("Challenge refuse!");
-        }
+            this.eventManager = eventManager;
+            
+        }        
 
         public void showListPlayer(ListView listPlayer) {
             listPlayer.Items.Add("123");
@@ -98,7 +84,8 @@ namespace Client
 
             Message mess = new Message(Cons.CHALLENGE, name.Length.ToString(Cons.SAMPLE), name);
             client.sendData(mess.convertToString());
-            client.Listen(eventManager);           
+            client.ListenThread(eventManager);           
         }
+        
     }
 }
