@@ -31,8 +31,6 @@ namespace Client
             this.eventManager.Result += EventManager_Result;
 
             client.ListenThread(eventManager);
-
-            this.ControlBox = false;
         }
 
         private void EventManager_Result(object sender, SuperEventArgs e) {
@@ -51,12 +49,22 @@ namespace Client
         }
 
         private void surrenderButton_Click(object sender, EventArgs e) {
-            DialogResult dialogResult = MessageBox.Show("Do you want surrender?", "Question", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("Do you want to surrender?", "Question", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
                 client.sendData(mess.convertToString());
             }         
+        }
+
+        private void FormPlay_FormClosing(object sender, FormClosingEventArgs e) {
+            if (MessageBox.Show("If exit, you'll lose. You want to exit?", "Warning", MessageBoxButtons.OKCancel) != System.Windows.Forms.DialogResult.OK)
+                e.Cancel = true;                
+        }
+
+        private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {
+            Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
+            client.sendData(mess.convertToString());
         }
     }
 }

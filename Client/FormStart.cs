@@ -28,6 +28,7 @@ namespace Client
 
             logoutButton.Visible = false;
             panelChallenge.Visible = false;
+
         }
 
         private void exitButton_Click(object sender, EventArgs e) {
@@ -60,17 +61,14 @@ namespace Client
         }        
 
         private void logoutButton_Click(object sender, EventArgs e) {
-            loginButton.Visible = true;
-            loginButton.Enabled = true;
-            logoutButton.Visible = false;
-            userNameBox.ReadOnly = false;
-
-            Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE, "");
-            client.sendData(mess.convertToString());
-            client.closeSocket();
-
-            startView.hideListPlayer(listPlayer);
-            startView.hidePanelChallenge(panelChallenge);
+            DialogResult dialogResult = MessageBox.Show("Do you want to log out?", "Question", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                logoutButton.Enabled = false;
+                Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE, "");
+                client.sendData(mess.convertToString());
+                client.ListenThread(eventManager);
+            }            
         }
 
         private void Notif_Login(object sender, SuperEventArgs e) {
@@ -83,7 +81,10 @@ namespace Client
                     startView.showPanelChallenge(panelChallenge);
 
                     loginButton.Visible = false;
+                    logoutButton.Enabled = true;
                     logoutButton.Visible = true;
+
+                    client.ListenThread(eventManager);
                 }
                 else
                 {
@@ -106,7 +107,20 @@ namespace Client
                     FormPlay formPlay = new FormPlay(name1, name2, this.client, eventManager);
                     formPlay.ShowDialog();
                 }
-                else MessageBox.Show("Challenge refuse!");
+                else if (e.ReturnCode == (int)Cons.command.REFUSE) MessageBox.Show("Challenge refuse!");
+                else if (e.ReturnCode == (int)Cons.command.LOGOUT)
+                {
+                    MessageBox.Show("Log out successful");
+                    loginButton.Visible = true;
+                    loginButton.Enabled = true;
+                    logoutButton.Visible = false;
+                    userNameBox.ReadOnly = false;
+
+                    client.closeSocket();
+
+                    startView.hideListPlayer(listPlayer);
+                    startView.hidePanelChallenge(panelChallenge);
+                }
             }));
         }
     }

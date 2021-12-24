@@ -143,7 +143,7 @@ namespace Client
                 return;
 
             Point point = getChessPoint(btn);
-            Message = new Message(Cons.MOVE, "04", point.X, point.Y);
+            Message = new Message(Cons.MOVE, (2 * Cons.LENGTH_SIZE).ToString(Cons.SAMPLE), point.X, point.Y);
             client.sendData(Message.convertToString());
 
             Mark(btn);

@@ -139,6 +139,8 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormPlay";
             this.Text = "Caro";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPlay_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormPlay_FormClosed);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();

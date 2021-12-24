@@ -98,6 +98,7 @@ namespace Client
                 case (int)Cons.command.ERROR:
                     break;
                 case (int)Cons.command.LOGOUT:
+                    eventManager.notifRespone(opcode, payload);
                     break;
                 default:
                     Message messError = new Message(Cons.ERROR, Cons.SAMPLE, "");
