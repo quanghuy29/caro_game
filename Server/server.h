@@ -23,7 +23,8 @@
 #define SIZE 100
 #define NAME_SIZE 20
 #define LENGTH 3
-#define LENGTHDATA 2
+#define LENGTHDATA 4
+#define SCORE 3
 #define CHALLENGE '1'
 #define ACCEPT '2'
 #define REFUSE '3'
@@ -33,8 +34,8 @@
 #define ENDING_DELIMITER "\r\n"
 
 struct playerInfo {
-	char username[NAME_SIZE];
-	char password[NAME_SIZE];
+	char* username;
+	char* password;
 	int score;
 	int rank;
 	bool isFree;

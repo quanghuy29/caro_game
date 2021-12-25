@@ -54,10 +54,10 @@ int main() {
 
 	printf("Server started!\n");
 	while (1) {
-		connectDB();
+		getAllPlayer();
 	}
 
-	char sendBuff[BUFF_SIZE], recvBuff[BUFF_SIZE], mainBuff[BUFF_MAX];
+	char recvBuff[BUFF_SIZE], mainBuff[BUFF_MAX];
 	SOCKET connSock;
 	sockaddr_in clientAddr;
 	int clientAddrLen = sizeof(clientAddr);
@@ -90,7 +90,6 @@ int main() {
 			}
 
 			//Add new socket into socks array
-			int i;
 			if (nEvents == WSA_MAXIMUM_WAIT_EVENTS) {
 				printf("\nToo many clients.");
 				closesocket(connSock);

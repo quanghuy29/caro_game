@@ -1,13 +1,13 @@
 #include "server.h"
 #include "database.h"
 
-bool connectDB() {
-	SQLHANDLE SQLEnvHandle = NULL;
-	SQLHANDLE SQLConnectionHandle = NULL;
-	SQLHANDLE SQLStatementHandle = NULL;
-	SQLRETURN retCode = 0;
+SQLHANDLE SQLEnvHandle = NULL;
+SQLHANDLE SQLConnectionHandle = NULL;
+SQLHANDLE SQLStatementHandle = NULL;
 
-	//char* sql = const_cast<char*>(SQLQuery.c_str());
+bool connectDB() {
+	SQLRETURN retCode = 0;
+	bool rsConn = false;
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -31,14 +31,14 @@ bool connectDB() {
 		//	(SQLCHAR*)"DRIVER={SQL Server}; SERVER=HANGVT, 1433; DATABASE=GameCaro; UID=sa; PWD=Meobeo145;",
 		//	SQL_NTS, retConString, 1024, NULL, SQL_DRIVER_NOPROMPT);
 		switch (SQLDriverConnect(SQLConnectionHandle, NULL,
-			(SQLCHAR*)"DRIVER={SQL Server}; SERVER=localhost, 1433; DATABASE=GameCaro; UID=sa; PWD=Meobeo145;",
+			(SQLCHAR*)"DRIVER={SQL Server}; SERVER=HANGVT, 1433; DATABASE=GameCaro; UID=sa; PWD=Meobeo145;",
 			SQL_NTS, retConString, 1024, NULL, SQL_DRIVER_NOPROMPT)) {
 			// Establishes connections to a driver and a data source
 		case SQL_SUCCESS:
-			retCode = 1;
+			rsConn = true;
 			break;
 		case SQL_SUCCESS_WITH_INFO:
-			retCode = 1;
+			rsConn = true;
 			break;
 		case SQL_NO_DATA_FOUND:
 			showSQLError(SQL_HANDLE_DBC, SQLConnectionHandle);
@@ -56,51 +56,84 @@ bool connectDB() {
 			break;
 		}
 
-		//if (retCode == -1)
-		//	break;
+		if (retCode == -1)
+			break;
 
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_STMT, SQLConnectionHandle, &SQLStatementHandle))
 			// Allocates the statement
 			break;
-
-		/*
-		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)"SELECT * FROM table information;", SQL_NTS)) {
-			// Executes a preparable statement
-			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
-			//break;
-			return false;
-		}
-		else {
-			return true;
-		}*/
 		
-
 	} while (FALSE);
+	return rsConn;
+}
 
+void disconnectDB() {
 	// Frees the resources and disconnects
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 	SQLDisconnect(SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
-	return true;
 }
 
-bool isUserExist(char *username);
-bool getUser(char * username, char * password, playerInfo* user);
+void isUserExist(Player* player) {
+	string SQLQuery = "UPDATE infomation SET isFree=1";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+		}
+	}
+	disconnectDB();
+}
+bool getUser(char *username, char *password, playerInfo* user);
 bool setUser(playerInfo* user);
-void getUserByUserID(int userID, playerInfo* user);
-bool getUserBySock(int sockUser, playerInfo* user);
-void updateUserStatus(playerInfo* user);
-void updateSockUser(playerInfo* user);
+void getUserByUsername(char *username);
+void updateUserStatus(char *username);
 
-void getPlayerByUserID(int userID, Player* player);
-void setPlayerByUserID(int userID, Player* player);
+void updateScoreOfPlayer(Player* player, int win) {
+	int score = player->playerinfo.score;
+	if (win) {
+		score += SCORE;
+	}
+	else
+	{
+		score -= SCORE;
+		if (score < 0) score = 0;
+	}
+	
+	string SQLQuery = "UPDATE infomation SET score=" + to_string(score) + " WHERE username='" + player->playerinfo.username + "'";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+		}
+	}
+	disconnectDB();
+}
 
-void updateWinOfPlayer(Player* player);
-void updateLoseOfPlayer(Player* player);
-void updateDrawOfPlayer(Player* player);
-
-int getAllPlayer(Player* allPlayer);
+string getAllPlayer() {
+	string resutlAllPlayer = "";
+	string SQLQuery = "SELECT username FROM information";
+	if (connectDB()) {
+		char username[30];
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+		}
+		else
+		{
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &username, sizeof(username), NULL);
+				resutlAllPlayer = resutlAllPlayer + username + " ";
+			}
+		}
+		disconnectDB();
+		return resutlAllPlayer;
+	}
+}
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 {
 	SQLCHAR SQLState[1024];
