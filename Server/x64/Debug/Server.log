@@ -1,10 +1,3 @@
 ﻿  database.cpp
-  Generating Code...
-d:\caro_game\server\database.cpp(136): warning C4715: 'getAllPlayer': not all control paths return a value
-  Compiling...
-  Server.cpp
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  myServerLib.cpp
   Server.vcxproj -> D:\caro_game\x64\Debug\Server.exe
   Server.vcxproj -> D:\caro_game\x64\Debug\Server.pdb (Full PDB)

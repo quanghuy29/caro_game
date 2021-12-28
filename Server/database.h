@@ -12,14 +12,24 @@ using namespace std;
 #define SQL_RESULT_LEN 240
 #define SQL_RETURN_CODE_LEN 1000
 
+struct userScore{
+	char username[30];
+	int score;
+
+	userScore(char name[30], int scoreUser) {
+		strcpy_s(username,name);
+		score = scoreUser;
+	}
+};
+
 bool connectDB();
 void disconnectDB();
 
-void isUserExist(Player* player);
-bool getUser(char *username, char *password, playerInfo* user);
+void updateUserIsFree(Player* player, int isFree);
+int getUser(char *username, playerInfo* user);
 bool setUser(playerInfo* user);
-void getUserByUsername(char *username);
-void updateUserStatus(char *username);
+void updateUserStatus(char *username, int status);
+void updateRank();
 void updateScoreOfPlayer(Player* player, int win);
 
 string getAllPlayer();

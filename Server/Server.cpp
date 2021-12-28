@@ -53,8 +53,10 @@ int main() {
 	}
 
 	printf("Server started!\n");
+	Player playerTest;
+	char testUser[20] = "meobeo";
 	while (1) {
-		getAllPlayer();
+		updateRank();
 	}
 
 	char recvBuff[BUFF_SIZE], mainBuff[BUFF_MAX];

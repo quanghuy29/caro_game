@@ -12,6 +12,7 @@
 #include <process.h>
 #include <windows.h>
 #include <conio.h>
+#include <vector>
 #include <iostream>
 #pragma comment (lib,"ws2_32.lib")
 
@@ -34,11 +35,12 @@
 #define ENDING_DELIMITER "\r\n"
 
 struct playerInfo {
-	char* username;
-	char* password;
+	char username[30];
+	char password[30];
 	int score;
 	int rank;
-	bool isFree;
+	int status;
+	int isFree;
 };
 
 struct Player {
