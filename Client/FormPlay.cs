@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,36 +16,50 @@ namespace Client
         ChessBoardManager chessBoard;
         SocketManager client;
         EventManager eventManager;
+        int num;
 
-        public FormPlay(string name1, string name2, SocketManager client, EventManager eventManager)
+        public FormPlay(string name1, string name2, SocketManager client, EventManager eventManager, int num)
         {
             InitializeComponent();
 
             namePlayer1.Text = name1;
             namePlayer2.Text = name2;
 
-            this.client = client;
-            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, client, eventManager);
-            chessBoard.drawBoard(panelBoard);
-
             this.eventManager = eventManager;
+            this.client = client;
+            this.num = num;
+
+            chessBoard = new ChessBoardManager(panelBoard, namePlayer1, namePlayer2, client, this.eventManager);
+
             this.eventManager.Result += EventManager_Result;
 
-            client.ListenThread(eventManager);
+            chessBoard.drawBoard(panelBoard);  
+            
+            if (num == 2)
+            {
+                panelBoard.Enabled = false;
+                client.ListenThread(eventManager, "");
+            }                    
         }
 
         private void EventManager_Result(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(()=>{
                 if (String.Compare(e.ReturnName, namePlayer1.Text) == 0)
                 {
-                    MessageBox.Show("You win!");
+                    if (num == 1) MessageBox.Show("You win!");
+                    else MessageBox.Show("You lose!");
                 }
                 else if (String.Compare(e.ReturnName, namePlayer2.Text) == 0)
                 {
-                    MessageBox.Show("You lose!");
+                    if(num == 1) MessageBox.Show("You lose!");
+                    else MessageBox.Show("You win!");
                 }
                 else MessageBox.Show("Draw!");
-            }));            
+            }));
+            client.ListenThread(eventManager, "");
+            this.eventManager.Result -= EventManager_Result;
+            this.FormClosing -= FormPlay_FormClosing;
+            this.FormClosed -= FormPlay_FormClosed;                   
             this.Close();
         }
 
@@ -54,6 +69,7 @@ namespace Client
             {
                 Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
                 client.sendData(mess.convertToString());
+                client.ListenThread(eventManager, "");
             }         
         }
 
@@ -62,9 +78,11 @@ namespace Client
                 e.Cancel = true;                
         }
 
-        private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {
-            Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
+        private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {            
+            Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "1");
             client.sendData(mess.convertToString());
+
+            client.ListenThread(eventManager, "");
         }
     }
 }

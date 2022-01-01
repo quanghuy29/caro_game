@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Client
@@ -12,9 +13,9 @@ namespace Client
         private int currentPlayer;
         private List<TextBox> namePlayer;
         private List<List<Button>> matrix;
+        private Message message;
         SocketManager client;
         EventManager eventManager;
-        private Message message;
 
         public Panel ChessBoard {
             get {
@@ -24,16 +25,6 @@ namespace Client
                 chessBoard = value;
             }
         }
-
-        public List<Player> Player {
-            get {
-                return player;
-            }
-            set {
-                player = value;
-            }
-        }
-
         public int CurrentPlayer {
             get {
                 return currentPlayer;
@@ -42,16 +33,6 @@ namespace Client
                 currentPlayer = value;
             }
         }
-
-        public List<TextBox> NamePlayer {
-            get {
-                return namePlayer;
-            }
-            set {
-                namePlayer = value;
-            }
-        }
-
         public Message Message {
             get {
                 return message;
@@ -61,7 +42,22 @@ namespace Client
                 message = value;
             }
         }
-
+        public List<Player> Player {
+            get {
+                return player;
+            }
+            set {
+                player = value;
+            }
+        }      
+        public List<TextBox> NamePlayer {
+            get {
+                return namePlayer;
+            }
+            set {
+                namePlayer = value;
+            }
+        }        
         public List<List<Button>> Matrix {
             get {
                 return matrix;
@@ -93,20 +89,21 @@ namespace Client
             NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
         }
 
-        private void EventManager_Move(object sender, SuperEventArgs e) {
-            chessBoard.Enabled = true;
-            Point point = getChessPoint(e.ReturnName);
-
-            Button btn = Matrix[point.X][point.Y];
-            if (btn.BackgroundImage != null)
-                return;
-            Mark(btn);
-
-            changPlayer();            
+        public Point getChessPoint(Button btn) {
+            int x = Convert.ToInt32(btn.Tag.ToString().Substring(0, Cons.LOCATION_SIZE));
+            int y = Convert.ToInt32(btn.Tag.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
+            Point point = new Point(x, y);
+            return point;
         }
 
-        public void drawBoard(Panel boardChess)
-        {
+        public Point getChessPoint(String btn) {
+            int x = Convert.ToInt32(btn.ToString().Substring(0, Cons.LOCATION_SIZE));
+            int y = Convert.ToInt32(btn.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
+            Point point = new Point(x, y);
+            return point;
+        }
+
+        public void drawBoard(Panel boardChess) {
             boardChess.Enabled = true;
             boardChess.Controls.Clear();
 
@@ -136,8 +133,30 @@ namespace Client
             }
         }
 
-        private void Btn_Click(object sender, EventArgs e)
-        {
+        private void Mark(Button btn) {
+            btn.BackgroundImage = Player[CurrentPlayer].Mark;
+        }
+
+        private void changPlayer() {
+            NamePlayer[CurrentPlayer].BackColor = Color.White;
+
+            CurrentPlayer = CurrentPlayer == 1 ? 0 : 1;
+            NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
+        }
+
+        private void EventManager_Move(object sender, SuperEventArgs e) {
+            chessBoard.Enabled = true;
+            Point point = getChessPoint(e.ReturnName);
+
+            Button btn = Matrix[point.X][point.Y];
+            if (btn.BackgroundImage != null)
+                return;
+            Mark(btn);
+
+            changPlayer();
+        }
+
+        private void Btn_Click(object sender, EventArgs e) {
             Button btn = sender as Button;
             if (btn.BackgroundImage != null)
                 return;
@@ -151,32 +170,7 @@ namespace Client
             changPlayer();
 
             chessBoard.Enabled = false;
-            client.ListenThread(eventManager);            
-        }
-
-        public Point getChessPoint(Button btn) {
-            int x = Convert.ToInt32(btn.Tag.ToString().Substring(0, Cons.LOCATION_SIZE));
-            int y = Convert.ToInt32(btn.Tag.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
-            Point point = new Point(x, y);
-            return point;
-        }
-
-        public Point getChessPoint(String btn) {
-            int x = Convert.ToInt32(btn.ToString().Substring(0, Cons.LOCATION_SIZE));
-            int y = Convert.ToInt32(btn.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
-            Point point = new Point(x, y);
-            return point;
-        }
-
-        private void Mark(Button btn) {
-            btn.BackgroundImage = Player[CurrentPlayer].Mark;
-        }
-
-        private void changPlayer() {
-            NamePlayer[CurrentPlayer].BackColor = Color.White;
-
-            CurrentPlayer = CurrentPlayer == 1 ? 0 : 1;
-            NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
+            client.ListenThread(eventManager, "move");
         }
     }
 }

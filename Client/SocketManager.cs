@@ -31,6 +31,7 @@ namespace Client
         }
 
         public void closeSocket() {
+            if (client == null) return;
             client.Close();
         }
 
@@ -48,31 +49,31 @@ namespace Client
             return rcvBuff;
         }
 
-        public void Listen(EventManager eventManager) {
+        public void Listen(EventManager eventManager, string debug) {
             try
             {
                 string rcvBuff;
                 rcvBuff = this.receiveData();
-                processData(rcvBuff, eventManager);
+                processData(rcvBuff, eventManager, debug);
              }
              catch { }    
         }
 
-        public void ListenThread(EventManager eventManager) {
+        public void ListenThread(EventManager eventManager, string debug) {
             Thread listenThread = new Thread(() =>
             {
-                Listen(eventManager);
+                Listen(eventManager, debug);
             });
             listenThread.IsBackground = true;
             listenThread.Start();
         }
 
-        private void processData(string mess, EventManager eventManager) {
+        private void processData(string mess, EventManager eventManager, string debug) {
             Message rcvMess = new Message(mess);
 
             int opcode = Convert.ToInt32(rcvMess.Opcode);
             string payload = rcvMess.Payload;
-
+            //MessageBox.Show(debug);
             switch (opcode)
             {
                 case (int)Cons.command.LOGIN:
@@ -82,28 +83,28 @@ namespace Client
                 case (int)Cons.command.LIST:
                     break;
                 case (int)Cons.command.CHALLENGE:
+                    eventManager.notifInvite(payload);
                     break;
-                case (int)Cons.command.ACCEPT:
+                case (int)Cons.command.ACCEPT:                   
                     eventManager.notifRespone(opcode, payload);
                     break;
                 case (int)Cons.command.REFUSE:
                     eventManager.notifRespone(opcode, payload);
                     break;
-                case (int)Cons.command.MOVE:
+                case (int)Cons.command.MOVE:                    
                     eventManager.notifMove(payload);
                     break;
                 case (int)Cons.command.RESULT:
+                    
                     eventManager.notifResult(payload);
                     break;
                 case (int)Cons.command.ERROR:
+                    eventManager.notifRespone(opcode, payload);
                     break;
                 case (int)Cons.command.LOGOUT:
                     eventManager.notifRespone(opcode, payload);
                     break;
                 default:
-                    Message messError = new Message(Cons.ERROR, Cons.SAMPLE, "");
-                    sendData(messError.convertToString());
-                    ListenThread(eventManager);
                     break;
             }
         }

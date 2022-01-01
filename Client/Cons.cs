@@ -30,6 +30,7 @@ namespace Client
         public static string RESULT = "7";
         public static string ERROR = "8";
         public static string LOGOUT = "9";
+        public static string CANCEL = "0";
 
         public enum command
         {
@@ -41,7 +42,8 @@ namespace Client
             MOVE = 6,
             RESULT = 7,
             ERROR = 8,
-            LOGOUT = 9
+            LOGOUT = 9,
+            CANCAL = 0
         }
     }
 }

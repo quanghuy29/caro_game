@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,6 +15,8 @@ namespace Client
         private Label labelChallenge;
         SocketManager client;
         EventManager eventManager;
+        Button buttonEnter;
+        Button buttonCancel;
 
         public List<TextBox> NamePlayer {
             get {
@@ -32,6 +35,26 @@ namespace Client
 
             set {
                 labelChallenge = value;
+            }
+        }
+
+        public Button ButtonEnter {
+            get {
+                return buttonEnter;
+            }
+
+            set {
+                buttonEnter = value;
+            }
+        }
+
+        public Button ButtonCancel {
+            get {
+                return buttonCancel;
+            }
+
+            set {
+                buttonCancel = value;
             }
         }
 
@@ -57,19 +80,25 @@ namespace Client
         }
 
         public void showPanelChallenge(Panel panelchallenge) {
-            Button buttonEnter = new Button()
+            ButtonEnter = new Button()
             {
                 Text = "Challenge",
                 Location = new Point(20, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
             };
-
+            ButtonCancel = new Button()
+            {
+                Text = "Cancel",
+                Location = new Point(20, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
+            };
             panelchallenge.Controls.Add(LabelChallenge);
             panelchallenge.Controls.Add(NamePlayer[1]);
-            panelchallenge.Controls.Add(buttonEnter);
+            panelchallenge.Controls.Add(ButtonEnter);
+            panelchallenge.Controls.Add(ButtonCancel);
             panelchallenge.Visible = true;
 
-            buttonEnter.Click += ButtonEnter_Click;
-        }
+            ButtonEnter.Click += ButtonEnter_Click;
+            ButtonCancel.Click += ButtonCancel_Click;
+        }        
 
         public void hideListPlayer(ListView listPlayer) {
             listPlayer.Items.Clear();
@@ -84,8 +113,19 @@ namespace Client
 
             Message mess = new Message(Cons.CHALLENGE, name.Length.ToString(Cons.SAMPLE), name);
             client.sendData(mess.convertToString());
-            client.ListenThread(eventManager);           
+
+            ButtonEnter.Visible = false;
+            ButtonCancel.Visible = true;   
         }
-        
+
+        private void ButtonCancel_Click(object sender, EventArgs e) {
+            string name = NamePlayer[1].Text;
+
+            Message mess = new Message(Cons.CANCEL, name.Length.ToString(Cons.SAMPLE), name);
+            client.sendData(mess.convertToString());
+
+            ButtonEnter.Visible = true;
+            ButtonCancel.Visible = false;
+        }
     }
 }
