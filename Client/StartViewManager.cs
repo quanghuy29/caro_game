@@ -74,11 +74,6 @@ namespace Client
             
         }        
 
-        public void showListPlayer(ListView listPlayer) {
-            listPlayer.Items.Add("123");
-            listPlayer.Items.Add("345");
-        }
-
         public void showPanelChallenge(Panel panelchallenge) {
             ButtonEnter = new Button()
             {
@@ -99,10 +94,6 @@ namespace Client
             ButtonEnter.Click += ButtonEnter_Click;
             ButtonCancel.Click += ButtonCancel_Click;
         }        
-
-        public void hideListPlayer(ListView listPlayer) {
-            listPlayer.Items.Clear();
-        }
 
         public void hidePanelChallenge(Panel panelchallenge) {
             panelchallenge.Visible = false;

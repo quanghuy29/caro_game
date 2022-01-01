@@ -27,10 +27,11 @@ namespace Client
             eventManager.Login += EventManager_Login;
             eventManager.Respone += EventManager_Respone;
             eventManager.Invite += EventManager_Invite;
+            eventManager.List += EventManager_List;
 
             logoutButton.Visible = false;
             panelChallenge.Visible = false;
-           
+            buttonReloadList.Enabled = false;           
         }
 
         private void exitButton_Click(object sender, EventArgs e) {
@@ -80,6 +81,14 @@ namespace Client
             }
         }
 
+        private void buttonReloadList_Click(object sender, EventArgs e) {
+            Message mess = new Message(Cons.LIST, Cons.SAMPLE, "");
+            client.sendData(mess.convertToString());
+            client.ListenThread(eventManager, "list");
+
+            buttonReloadList.Enabled = false;
+        }
+
         private void EventManager_Login(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
@@ -87,12 +96,11 @@ namespace Client
                 {
                     MessageBox.Show("Login successful!");
 
-                    startView.showListPlayer(listPlayer);
                     startView.showPanelChallenge(panelChallenge);
-
                     loginButton.Visible = false;
                     logoutButton.Enabled = true;
                     logoutButton.Visible = true;
+                    buttonReloadList.Enabled = true;
 
                     client.ListenThread(eventManager, "start");
                 }
@@ -152,8 +160,9 @@ namespace Client
 
                     client.closeSocket();
 
-                    startView.hideListPlayer(listPlayer);
                     startView.hidePanelChallenge(panelChallenge);
+                    listPlayer.Items.Clear();
+                    buttonReloadList.Enabled = false;
                 }
                 else if (e.ReturnCode == (int)Cons.command.ERROR)
                 {
@@ -181,5 +190,38 @@ namespace Client
                 }
             }));
         }
+
+        private void EventManager_List(object sender, SuperEventArgs e) {
+            string listname = e.ReturnName;
+
+            listPlayer.Items.Clear();
+
+            while (String.Compare(listname, "") != 0) 
+            {
+                int length = listname.Length;
+                int i;
+                string name;
+                for (i = 0; i < length; i++)
+                {
+                    if (listname[i] == Cons.SPACE[0]) break;
+                }
+
+                if (i == length)
+                {
+                    listPlayer.Items.Add(listname);
+                    break;
+                }
+
+                name = listname.Substring(0, i);
+
+                listname = listname.Remove(0, i + 1);
+
+                listPlayer.Items.Add(name);
+            }                       
+            client.ListenThread(eventManager, "");
+
+            buttonReloadList.Enabled = true;
+        }
+
     }
 }

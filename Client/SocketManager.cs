@@ -81,6 +81,7 @@ namespace Client
                     else eventManager.notifLogin(0);
                     break;
                 case (int)Cons.command.LIST:
+                    eventManager.notifList(payload);
                     break;
                 case (int)Cons.command.CHALLENGE:
                     eventManager.notifInvite(payload);
@@ -94,8 +95,7 @@ namespace Client
                 case (int)Cons.command.MOVE:                    
                     eventManager.notifMove(payload);
                     break;
-                case (int)Cons.command.RESULT:
-                    
+                case (int)Cons.command.RESULT:                    
                     eventManager.notifResult(payload);
                     break;
                 case (int)Cons.command.ERROR:

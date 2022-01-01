@@ -33,6 +33,7 @@
             this.listPlayer = new System.Windows.Forms.ListView();
             this.panelChallenge = new System.Windows.Forms.Panel();
             this.logoutButton = new System.Windows.Forms.Button();
+            this.buttonReloadList = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loginText
@@ -81,7 +82,7 @@
             this.listPlayer.Location = new System.Drawing.Point(248, 37);
             this.listPlayer.Margin = new System.Windows.Forms.Padding(4);
             this.listPlayer.Name = "listPlayer";
-            this.listPlayer.Size = new System.Drawing.Size(247, 328);
+            this.listPlayer.Size = new System.Drawing.Size(250, 182);
             this.listPlayer.TabIndex = 4;
             this.listPlayer.UseCompatibleStateImageBehavior = false;
             // 
@@ -106,11 +107,22 @@
             this.logoutButton.UseVisualStyleBackColor = true;
             this.logoutButton.Click += new System.EventHandler(this.logoutButton_Click);
             // 
+            // buttonReloadList
+            // 
+            this.buttonReloadList.Location = new System.Drawing.Point(334, 233);
+            this.buttonReloadList.Name = "buttonReloadList";
+            this.buttonReloadList.Size = new System.Drawing.Size(75, 23);
+            this.buttonReloadList.TabIndex = 7;
+            this.buttonReloadList.Text = "Reload";
+            this.buttonReloadList.UseVisualStyleBackColor = true;
+            this.buttonReloadList.Click += new System.EventHandler(this.buttonReloadList_Click);
+            // 
             // FormStart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(564, 448);
+            this.Controls.Add(this.buttonReloadList);
             this.Controls.Add(this.logoutButton);
             this.Controls.Add(this.panelChallenge);
             this.Controls.Add(this.listPlayer);
@@ -135,5 +147,6 @@
         private System.Windows.Forms.ListView listPlayer;
         private System.Windows.Forms.Panel panelChallenge;
         private System.Windows.Forms.Button logoutButton;
+        private System.Windows.Forms.Button buttonReloadList;
     }
 }

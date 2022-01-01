@@ -14,6 +14,7 @@ namespace Client
         private event EventHandler<SuperEventArgs> _move;
         private event EventHandler<SuperEventArgs> _result;
         private event EventHandler<SuperEventArgs> _invite;
+        private event EventHandler<SuperEventArgs> _list;
 
         public event EventHandler<SuperEventArgs> Login {
             add {
@@ -60,6 +61,15 @@ namespace Client
             }
         }
 
+        public event EventHandler<SuperEventArgs> List {
+            add {
+                _list += value;
+            }
+            remove {
+                _list -= value;
+            }
+        }
+
         public void notifLogin(int result) {
             if (_login != null)
                 _login(this, new SuperEventArgs(result));
@@ -86,6 +96,11 @@ namespace Client
         public void notifInvite(string name) {
             if (_invite != null)
                 _invite(this, new SuperEventArgs(name));
+        }
+
+        public void notifList(string listname) {
+            if (_list != null)
+                _list(this, new SuperEventArgs(listname));
         }
     }
 
