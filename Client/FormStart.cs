@@ -16,6 +16,8 @@ namespace Client
         public StartViewManager startView;
         SocketManager client;
         EventManager eventManager;
+        private string yourName;
+        private string otherName;
 
         public FormStart() {
             InitializeComponent();
@@ -23,6 +25,7 @@ namespace Client
             client = new SocketManager();
             eventManager = new EventManager();
             startView = new StartViewManager(userNameBox, client, eventManager);
+            yourName = userNameBox.Text;
 
             eventManager.Login += EventManager_Login;
             eventManager.Respone += EventManager_Respone;
@@ -51,9 +54,10 @@ namespace Client
             {
                 userNameBox.ReadOnly = true;
                 loginButton.Enabled = false;
+                yourName = userNameBox.Text;
                 if (client.connectServer())
                 {
-                    Message mess = new Message(Cons.LOGIN, userNameBox.Text.Length.ToString(Cons.SAMPLE), userNameBox.Text);
+                    Message mess = new Message(Cons.LOGIN, yourName.Length.ToString(Cons.SAMPLE), yourName);
                     client.sendData(mess.convertToString());
                     client.ListenThread(eventManager, "login");
                 }
@@ -119,11 +123,9 @@ namespace Client
             {
                 if (e.ReturnCode == (int)Cons.command.ACCEPT)
                 {
-                    if(String.Compare(e.ReturnName,"1") == 0)
+                    if(String.Compare(e.ReturnName, "") == 0)
                     {
                         MessageBox.Show("Game started!");
-                        string yourName = userNameBox.Text;
-                        string otherName = e.ReturnName;
 
                         FormPlay formPlay = new FormPlay(otherName, yourName, client, eventManager, 2);
                         formPlay.ShowDialog();
@@ -134,8 +136,7 @@ namespace Client
                     else
                     {
                         MessageBox.Show("Challenge accepted!");
-                        string yourName = userNameBox.Text;
-                        string otherName = e.ReturnName;
+                        otherName = e.ReturnName;
 
                         FormPlay formPlay = new FormPlay(yourName, otherName, client, eventManager, 1);
                         formPlay.ShowDialog();
@@ -175,19 +176,21 @@ namespace Client
         private void EventManager_Invite(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
-                DialogResult dialogResult = MessageBox.Show(e.ReturnName + " want to challenge you. Do you accept?", "Invite", MessageBoxButtons.YesNo);
+                otherName = e.ReturnName;
+                DialogResult dialogResult = MessageBox.Show(otherName + " want to challenge you. Do you accept?", "Invite", MessageBoxButtons.YesNo);
+                
                 if (dialogResult == DialogResult.Yes)
                 {
-                    Message mess = new Message(Cons.ACCEPT, e.ReturnName.Length.ToString(Cons.SAMPLE), e.ReturnName);
+                    Message mess = new Message(Cons.ACCEPT, otherName.Length.ToString(Cons.SAMPLE), otherName);
                     client.sendData(mess.convertToString());
 
                     client.ListenThread(eventManager, "");
                 }
                 else if (dialogResult == DialogResult.No)
                 {
-                    Message mess = new Message(Cons.REFUSE, e.ReturnName.Length.ToString(Cons.SAMPLE), e.ReturnName);
+                    Message mess = new Message(Cons.REFUSE, otherName.Length.ToString(Cons.SAMPLE), otherName);
                     client.sendData(mess.convertToString());
-                }
+                }                
             }));
         }
 
