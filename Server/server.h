@@ -23,9 +23,7 @@
 #define BUFF_MAX 100000
 #define SIZE 100
 #define NAME_SIZE 20
-#define LENGTH 3
 #define LENGTHDATA 4
-#define SCORE 3
 #define CHALLENGE '1'
 #define ACCEPT '2'
 #define REFUSE '3'
@@ -50,15 +48,7 @@ struct Player {
 	playerInfo playerinfo;
 };
 
-struct room{
-	Player player1;
-	Player player2;
-	int a[LENGTH][LENGTH] = { 0 };
-};
-
 /* Function Prototype */
-int init(SOCKET listenSock, sockaddr_in serverAddr, char serverIP[], int serverPort);
-int testWin(int x, int y, int a[LENGTH][LENGTH]);
 int Receive(Player, char *, char *);
 int Send(Player, char *, char *);
 int processDataReceive(Player, char *);

@@ -1,3 +1,5 @@
-﻿  database.cpp
+﻿  Server.cpp
+  Room.cpp
+  Generating Code...
   Server.vcxproj -> D:\caro_game\x64\Debug\Server.exe
   Server.vcxproj -> D:\caro_game\x64\Debug\Server.pdb (Full PDB)

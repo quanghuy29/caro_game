@@ -11,6 +11,7 @@
 using namespace std;
 #define SQL_RESULT_LEN 240
 #define SQL_RETURN_CODE_LEN 1000
+#define SCORE 3
 
 struct userScore{
 	char username[30];

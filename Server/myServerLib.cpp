@@ -151,5 +151,3 @@ int processDataReceive(Player s, char *dataIn) {
 	strncpy_s(payload, dataIn + 5, lenData);
 	return 1;
 }
-
-

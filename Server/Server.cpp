@@ -2,6 +2,7 @@
 #define FD_SETSIZE 1024
 #include "server.h"
 #include "database.h"
+#include "Room.h"
 
 int main() {
 	DWORD		nEvents = 0;
@@ -53,11 +54,18 @@ int main() {
 	}
 
 	printf("Server started!\n");
+
+	/*test function
 	Player playerTest;
 	char testUser[20] = "meobeo";
+	Room room = Room(1);
 	while (1) {
-		updateRank();
+		Coordinates point(3, 6);
+		room.updateMatrix(point, 1);
+		room.isEndGame(point);
 	}
+
+	*/
 
 	char recvBuff[BUFF_SIZE], mainBuff[BUFF_MAX];
 	SOCKET connSock;
