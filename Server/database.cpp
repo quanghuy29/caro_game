@@ -72,6 +72,49 @@ void disconnectDB() {
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 }
 
+int userLogin(char *username, char *password) {
+	string SQLQuery = "SELECT password, status FROM information WHERE username='" + string(username) + "'";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+			return 400;
+		}
+		else
+		{
+			char pass[30];
+			int status;
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &pass, sizeof(pass), NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_ULONG, &status, 0, NULL);
+			}
+			int ret = strcmp(pass, "");
+			if (strcmp(pass, "") == 0) {
+				disconnectDB();
+				return 11;
+			}
+			if (strcmp(pass, password) != 0) {
+				disconnectDB();
+				return 14;
+			}
+			else {
+				if (status == 1) {
+					disconnectDB();
+					return 12;
+				}
+				else {
+					updateUserStatus(username, 1);
+					disconnectDB();
+					return 10;
+				}
+			}
+		}
+	}
+	
+}
+
 void updateUserIsFree(Player* player, int isFree) {
 	string SQLQuery = "UPDATE information SET isFree=" + to_string(isFree) + " WHERE username='" + string(player->playerinfo.username) + "'";
 	if (connectDB()) {
@@ -79,6 +122,7 @@ void updateUserIsFree(Player* player, int isFree) {
 		{
 			// Executes a preparable statement
 			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
 		}
 	}
 	disconnectDB();
@@ -91,6 +135,7 @@ int getUser(char *username, playerInfo* user) {
 		{
 			// Executes a preparable statement
 			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
 			return 0;
 		}
 		else
@@ -105,6 +150,29 @@ int getUser(char *username, playerInfo* user) {
 			}
 		}
 	}
+	disconnectDB();
+	return 1;
+}
+
+int getSocketUser(char *username, SOCKET s) {
+	string SQLQuery = "SELECT socket FROM information WHERE username='" + string(username) + "'";
+	char *socket;
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+			return 0;
+		}
+		else
+		{
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, socket, sizeof(socket), NULL);
+			}
+		}
+	}
+	s = (SOCKET) socket;
 	disconnectDB();
 	return 1;
 }

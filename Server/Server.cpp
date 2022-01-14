@@ -57,12 +57,10 @@ int main() {
 
 	/*test function
 	Player playerTest;
-	char testUser[20] = "meobeo";
-	Room room = Room(1);
 	while (1) {
-		Coordinates point(3, 6);
-		room.updateMatrix(point, 1);
-		room.isEndGame(point);
+		char testUser[20] = "meobeo123";
+		char pass[20] = "1234567";
+		int meoTest = userLogin(testUser, pass);
 	}
 
 	*/
@@ -129,11 +127,11 @@ int main() {
 			ret = Receive(listClientConnect[index], mainBuff, recvBuff);
 			while (ret) {
 				if (ret == 2) {
-					processDataReceive(listClientConnect[index], recvBuff);
+					splitReceiveData(&listClientConnect[index], recvBuff);
 					break;
 				}
 				else {
-					processDataReceive(listClientConnect[index], recvBuff);
+					splitReceiveData(&listClientConnect[index], recvBuff);
 					ZeroMemory(&recvBuff, sizeof(recvBuff));
 					ret = Receive(listClientConnect[index], mainBuff, recvBuff);
 				}

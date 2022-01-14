@@ -28,10 +28,12 @@ void disconnectDB();
 
 void updateUserIsFree(Player* player, int isFree);
 int getUser(char *username, playerInfo* user);
+int getSocketUser(char *username, SOCKET s);
 bool setUser(playerInfo* user);
 void updateUserStatus(char *username, int status);
 void updateRank();
 void updateScoreOfPlayer(Player* player, int win);
+int userLogin(char *username, char *password);
 
 string getAllPlayer();
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);

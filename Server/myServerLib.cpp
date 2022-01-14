@@ -1,4 +1,6 @@
 #include "server.h"
+#include "database.h"
+#include "Room.h"
 
 void convertIntToChar(int value, char des[]) {
 	for (int i = 3; i > -1; i--) {
@@ -142,12 +144,61 @@ int Send(Player s, char *opcode, char *dataIn) {
 
 */
 
-int processDataReceive(Player s, char *dataIn) {
+void splitReceiveData(Player *player, char *dataIn) {
 	char opcode[2], lengthPay[5], payload[BUFF_MAX];
+	package mess;
 	int lenData = 0;
-	strncpy_s(opcode, dataIn + 0, 1);
-	strncpy_s(lengthPay, dataIn + 1, 4);
-	lenData = atoi(lengthPay);
-	strncpy_s(payload, dataIn + 5, lenData);
+	mess.opcode = dataIn[0];
+	strncpy_s(mess.length, dataIn + 1, 4);
+	lenData = atoi(mess.length);
+	strncpy_s(mess.payload, dataIn + 5, lenData);
+	handleDataReceive(player, mess);
+}
+
+void handleDataReceive(Player *player, package mess) {
+	switch (mess.opcode)
+	{
+	case '1':
+		login(player, mess);
+		break;
+	case '2':
+		break;
+	case '3':
+		break;
+	case '4':
+		break;
+	case '5':
+		break;
+	case '6':
+		break;
+	case '9':
+		logout(player, mess);
+		break;
+	default:
+		break;
+	}
+}
+
+int login(Player *player, package mess) {
+	if (player->isLogin == 1) return 13;
+	char *username, *password;
+	username = strtok(mess.payload, " ");
+	password = strtok(NULL, "\n");
+	int ret = userLogin(username, password);
+	if (ret == 10) {
+		player->isLogin = 1;
+		getUser(username, &(player->playerinfo));
+	}
 	return 1;
+	//return userLogin(username, password);
+}
+
+int logout(Player *player, package mess) {
+	if (player->isLogin == 1) {
+		player->isLogin = 0;
+		updateUserIsFree(player, 1);
+		updateUserStatus(player->playerinfo.username, 0);
+		return 90;
+	}
+	else return 91;
 }

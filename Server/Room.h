@@ -31,11 +31,12 @@ public:
 	int ** createMatrix();
 	void addClient(SOCKET clientFirst, SOCKET clientSecond);
 	void updateMatrix(Coordinates coordinates, int value);
-	bool isEndGame(Coordinates coordinates);
+	int isEndGame(Coordinates coordinates);
 	bool isEndByHorizontal(Coordinates coordinates);
 	bool isEndByVertical(Coordinates coordinates);
 	bool isEndByRightDiagonal(Coordinates coordinates);
 	bool isEndByLeftDiagonal(Coordinates coordinates);
+	bool isEndByFullMatrix();
 	void exitRoom();
 
 };

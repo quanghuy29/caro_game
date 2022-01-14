@@ -45,13 +45,25 @@ struct Player {
 	SOCKET s;
 	char IPAddress[INET_ADDRSTRLEN];
 	int portAddress;
+	int isLogin = 0;
 	playerInfo playerinfo;
+};
+
+struct package {
+	char opcode;
+	char length[5];
+	char payload[BUFF_MAX];
 };
 
 /* Function Prototype */
 int Receive(Player, char *, char *);
 int Send(Player, char *, char *);
-int processDataReceive(Player, char *);
+//void splitReceiveData(char *, package);
+void splitReceiveData(Player *, char *);
+void handleDataReceive(Player *, package);
 void convertIntToChar(int value, char des[]);
+
+int login(Player *, package);
+int logout(Player *, package);
 
 #endif

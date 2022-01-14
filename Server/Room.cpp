@@ -43,11 +43,13 @@ void Room::updateMatrix(Coordinates coordinates, int value) {
 	printf("\n");
 }
 
-bool Room::isEndGame(Coordinates coordinates) {
-	return (isEndByHorizontal(coordinates) ||
+int Room::isEndGame(Coordinates coordinates) {
+	if (isEndByHorizontal(coordinates) ||
 		isEndByVertical(coordinates) ||
 		isEndByRightDiagonal(coordinates) ||
-		isEndByLeftDiagonal(coordinates));
+		isEndByLeftDiagonal(coordinates)) return 1;
+	if (isEndByFullMatrix()) return 2;
+	return 0;
 }
 
 bool Room::isEndByHorizontal(Coordinates coordinates) {
@@ -156,6 +158,15 @@ bool Room::isEndByLeftDiagonal(Coordinates coordinates) {
 	}
 
 	return countTopLeft + countBottomRight == CHESS_WIN;
+}
+
+bool Room::isEndByFullMatrix() {
+	for (int i = 0; i < CHESS_HEIGHT; i++) {
+		for (int j = 0; j < CHESS_WIDTH; j++) {
+			if (matrixRoom[i][j] == 0) return 0;
+		}
+	}
+	return 1;
 }
 
 void Room::exitRoom() {
