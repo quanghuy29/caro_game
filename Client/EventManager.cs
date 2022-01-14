@@ -107,19 +107,19 @@ namespace Client
     public class SuperEventArgs : EventArgs
     {
         private int returnCode;
-        private string returnName;
+        private string returnText;
 
         public SuperEventArgs(int returnCode) {
             this.ReturnCode = returnCode;
         }
 
         public SuperEventArgs(string returnName) {
-            this.ReturnName = returnName;
+            this.ReturnText = returnName;
         }
 
         public SuperEventArgs(int returnCode, string returnName) {
             this.returnCode = returnCode;
-            this.returnName = returnName;
+            this.returnText = returnName;
         }
 
         public int ReturnCode {
@@ -132,13 +132,13 @@ namespace Client
             }
         }
 
-        public string ReturnName {
+        public string ReturnText {
             get {
-                return returnName;
+                return returnText;
             }
 
             set {
-                returnName = value;
+                returnText = value;
             }
         }
     }

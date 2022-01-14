@@ -13,9 +13,9 @@ namespace Client
         public static int BOARD_SIZE = 3;
 
         public static int OPCODE_SIZE = 1;
-        public static int LENGTH_SIZE = 2;
+        public static int LENGTH_SIZE = 4;
         public static int LOCATION_SIZE = 2;
-        public static string SAMPLE = "00";
+        public static string SAMPLE = "0000";
         public static string SPACE = " ";
 
         public static string IP = "127.0.0.1";
@@ -32,6 +32,10 @@ namespace Client
         public static string ERROR = "8";
         public static string LOGOUT = "9";
         public static string CANCEL = "0";
+
+        public static int PL_SUCCESS = 0;
+        public static int PL_FAIL = 1;
+        public static int PL_BUSY = 2;
 
         public enum command
         {

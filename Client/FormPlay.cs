@@ -38,25 +38,25 @@ namespace Client
             if (num == 2)
             {
                 panelBoard.Enabled = false;
-                client.ListenThread(eventManager, "");
+                client.ListenThread(eventManager);
             }                    
         }
 
         private void EventManager_Result(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(()=>{
-                if (String.Compare(e.ReturnName, namePlayer1.Text) == 0)
+                if (String.Compare(e.ReturnText, namePlayer1.Text) == 0)
                 {
                     if (num == 1) MessageBox.Show("You win!");
                     else MessageBox.Show("You lose!");
                 }
-                else if (String.Compare(e.ReturnName, namePlayer2.Text) == 0)
+                else if (String.Compare(e.ReturnText, namePlayer2.Text) == 0)
                 {
                     if(num == 1) MessageBox.Show("You lose!");
                     else MessageBox.Show("You win!");
                 }
                 else MessageBox.Show("Draw!");
             }));
-            client.ListenThread(eventManager, "");
+            client.ListenThread(eventManager);
             this.eventManager.Result -= EventManager_Result;
             this.FormClosing -= FormPlay_FormClosing;
             this.FormClosed -= FormPlay_FormClosed;                   
@@ -69,7 +69,7 @@ namespace Client
             {
                 Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
                 client.sendData(mess.convertToString());
-                client.ListenThread(eventManager, "");
+                client.ListenThread(eventManager);
             }         
         }
 
@@ -82,7 +82,7 @@ namespace Client
             Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "1");
             client.sendData(mess.convertToString());
 
-            client.ListenThread(eventManager, "");
+            client.ListenThread(eventManager);
         }
     }
 }

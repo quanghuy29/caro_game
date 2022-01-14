@@ -14,8 +14,8 @@ namespace Client
         private List<TextBox> namePlayer;
         private List<List<Button>> matrix;
         private Message message;
-        SocketManager client;
-        EventManager eventManager;
+        private SocketManager client;
+        private EventManager eventManager;
 
         public Panel ChessBoard {
             get {
@@ -146,7 +146,7 @@ namespace Client
 
         private void EventManager_Move(object sender, SuperEventArgs e) {
             chessBoard.Enabled = true;
-            Point point = getChessPoint(e.ReturnName);
+            Point point = getChessPoint(e.ReturnText);
 
             Button btn = Matrix[point.X][point.Y];
             if (btn.BackgroundImage != null)
@@ -170,7 +170,7 @@ namespace Client
             changPlayer();
 
             chessBoard.Enabled = false;
-            client.ListenThread(eventManager, "move");
+            client.ListenThread(eventManager);
         }
     }
 }

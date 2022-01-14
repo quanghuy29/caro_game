@@ -34,12 +34,14 @@
             this.panelChallenge = new System.Windows.Forms.Panel();
             this.logoutButton = new System.Windows.Forms.Button();
             this.buttonReloadList = new System.Windows.Forms.Button();
+            this.passwdTextbox = new System.Windows.Forms.TextBox();
+            this.pwLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // loginText
             // 
             this.loginText.AutoSize = true;
-            this.loginText.Location = new System.Drawing.Point(60, 46);
+            this.loginText.Location = new System.Drawing.Point(1, 57);
             this.loginText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.loginText.Name = "loginText";
             this.loginText.Size = new System.Drawing.Size(73, 17);
@@ -59,7 +61,7 @@
             // 
             // userNameBox
             // 
-            this.userNameBox.Location = new System.Drawing.Point(31, 87);
+            this.userNameBox.Location = new System.Drawing.Point(81, 57);
             this.userNameBox.Margin = new System.Windows.Forms.Padding(4);
             this.userNameBox.Name = "userNameBox";
             this.userNameBox.Size = new System.Drawing.Size(132, 22);
@@ -117,11 +119,29 @@
             this.buttonReloadList.UseVisualStyleBackColor = true;
             this.buttonReloadList.Click += new System.EventHandler(this.buttonReloadList_Click);
             // 
+            // passwdTextbox
+            // 
+            this.passwdTextbox.Location = new System.Drawing.Point(81, 96);
+            this.passwdTextbox.Name = "passwdTextbox";
+            this.passwdTextbox.Size = new System.Drawing.Size(132, 22);
+            this.passwdTextbox.TabIndex = 8;
+            // 
+            // pwLabel
+            // 
+            this.pwLabel.AutoSize = true;
+            this.pwLabel.Location = new System.Drawing.Point(1, 99);
+            this.pwLabel.Name = "pwLabel";
+            this.pwLabel.Size = new System.Drawing.Size(69, 17);
+            this.pwLabel.TabIndex = 10;
+            this.pwLabel.Text = "Password";
+            // 
             // FormStart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(564, 448);
+            this.Controls.Add(this.pwLabel);
+            this.Controls.Add(this.passwdTextbox);
             this.Controls.Add(this.buttonReloadList);
             this.Controls.Add(this.logoutButton);
             this.Controls.Add(this.panelChallenge);
@@ -148,5 +168,7 @@
         private System.Windows.Forms.Panel panelChallenge;
         private System.Windows.Forms.Button logoutButton;
         private System.Windows.Forms.Button buttonReloadList;
+        private System.Windows.Forms.TextBox passwdTextbox;
+        private System.Windows.Forms.Label pwLabel;
     }
 }

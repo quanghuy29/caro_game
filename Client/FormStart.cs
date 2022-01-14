@@ -53,13 +53,15 @@ namespace Client
             if (!String.IsNullOrEmpty(userNameBox.Text))
             {
                 userNameBox.ReadOnly = true;
+                passwdTextbox.ReadOnly = true;
                 loginButton.Enabled = false;
                 yourName = userNameBox.Text;
                 if (client.connectServer())
                 {
-                    Message mess = new Message(Cons.LOGIN, yourName.Length.ToString(Cons.SAMPLE), yourName);
+                    string payload = yourName + Cons.SPACE + passwdTextbox.Text;
+                    Message mess = new Message(Cons.LOGIN, payload.Length.ToString(Cons.SAMPLE), payload);
                     client.sendData(mess.convertToString());
-                    client.ListenThread(eventManager, "login");
+                    client.ListenThread(eventManager);
                 }
                 else
                 {
@@ -81,14 +83,14 @@ namespace Client
                 logoutButton.Enabled = false;
                 Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE, "");
                 client.sendData(mess.convertToString());
-                client.ListenThread(eventManager, "logout");
+                client.ListenThread(eventManager);
             }
         }
 
         private void buttonReloadList_Click(object sender, EventArgs e) {
             Message mess = new Message(Cons.LIST, Cons.SAMPLE, "");
             client.sendData(mess.convertToString());
-            client.ListenThread(eventManager, "list");
+            client.ListenThread(eventManager);
 
             buttonReloadList.Enabled = false;
         }
@@ -96,7 +98,7 @@ namespace Client
         private void EventManager_Login(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
-                if (e.ReturnCode == 1)
+                if (e.ReturnCode == Cons.PL_SUCCESS)
                 {
                     MessageBox.Show("Login successful!");
 
@@ -106,7 +108,7 @@ namespace Client
                     logoutButton.Visible = true;
                     buttonReloadList.Enabled = true;
 
-                    client.ListenThread(eventManager, "start");
+                    client.ListenThread(eventManager);
                 }
                 else
                 {
@@ -123,7 +125,7 @@ namespace Client
             {
                 if (e.ReturnCode == (int)Cons.command.ACCEPT)
                 {
-                    if(String.Compare(e.ReturnName, "") == 0)
+                    if(String.Compare(e.ReturnText, "") == 0)
                     {
                         MessageBox.Show("Game started!");
 
@@ -136,7 +138,7 @@ namespace Client
                     else
                     {
                         MessageBox.Show("Challenge accepted!");
-                        otherName = e.ReturnName;
+                        otherName = e.ReturnText;
 
                         FormPlay formPlay = new FormPlay(yourName, otherName, client, eventManager, 1);
                         formPlay.ShowDialog();
@@ -147,9 +149,17 @@ namespace Client
                 }
                 else if (e.ReturnCode == (int)Cons.command.REFUSE)
                 {
-                    MessageBox.Show("Challenge refuse!");
-                    startView.ButtonEnter.Visible = true;
-                    startView.ButtonCancel.Visible = false;
+                    if (String.Compare(e.ReturnText, "") == 0)
+                    {
+                        MessageBox.Show("Challange is cancel!");
+                        client.ListenThread(eventManager);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Challenge refuse!");
+                        startView.ButtonEnter.Visible = true;
+                        startView.ButtonCancel.Visible = false;
+                    }
                 }
                 else if (e.ReturnCode == (int)Cons.command.LOGOUT)
                 {
@@ -158,6 +168,7 @@ namespace Client
                     loginButton.Enabled = true;
                     logoutButton.Visible = false;
                     userNameBox.ReadOnly = false;
+                    passwdTextbox.ReadOnly = false;
 
                     client.closeSocket();
 
@@ -167,7 +178,7 @@ namespace Client
                 }
                 else if (e.ReturnCode == (int)Cons.command.ERROR)
                 {
-                    if (String.Compare(e.ReturnName, "1") == 0) MessageBox.Show("Player is playing!");
+                    if (String.Compare(e.ReturnText, Cons.PL_BUSY.ToString()) == 0) MessageBox.Show("Player is playing!");
                     else MessageBox.Show("Can't play with player has too high or too low rank!");
                 }
             }));
@@ -176,7 +187,7 @@ namespace Client
         private void EventManager_Invite(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
-                otherName = e.ReturnName;
+                otherName = e.ReturnText;
                 DialogResult dialogResult = MessageBox.Show(otherName + " want to challenge you. Do you accept?", "Invite", MessageBoxButtons.YesNo);
                 
                 if (dialogResult == DialogResult.Yes)
@@ -184,7 +195,7 @@ namespace Client
                     Message mess = new Message(Cons.ACCEPT, otherName.Length.ToString(Cons.SAMPLE), otherName);
                     client.sendData(mess.convertToString());
 
-                    client.ListenThread(eventManager, "");
+                    client.ListenThread(eventManager);
                 }
                 else if (dialogResult == DialogResult.No)
                 {
@@ -195,7 +206,7 @@ namespace Client
         }
 
         private void EventManager_List(object sender, SuperEventArgs e) {
-            string listname = e.ReturnName;
+            string listname = e.ReturnText;
 
             listPlayer.Items.Clear();
 
@@ -221,10 +232,9 @@ namespace Client
 
                 listPlayer.Items.Add(name);
             }                       
-            client.ListenThread(eventManager, "");
+            client.ListenThread(eventManager);
 
             buttonReloadList.Enabled = true;
         }
-
     }
 }

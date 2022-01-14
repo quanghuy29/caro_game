@@ -1,4 +1,4 @@
-﻿Build started 1/6/2022 8:19:16 AM.
+﻿Build started 1/14/2022 7:58:27 PM.
      1>Project "\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Server\Server.vcxproj" on node 3 (Build target(s)).
      1>Link:
          Server.vcxproj -> \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\x64\Debug\Server.exe
@@ -6,4 +6,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.51
+Time Elapsed 00:00:02.15
