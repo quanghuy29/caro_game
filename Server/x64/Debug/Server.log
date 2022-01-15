@@ -1,3 +1,9 @@
-﻿  Server.cpp
-  Server.vcxproj -> D:\caro_game\x64\Debug\Server.exe
-  Server.vcxproj -> D:\caro_game\x64\Debug\Server.pdb (Full PDB)
+﻿Build started 1/14/2022 7:58:27 PM.
+     1>Project "\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Server\Server.vcxproj" on node 3 (Build target(s)).
+     1>Link:
+         Server.vcxproj -> \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\x64\Debug\Server.exe
+     1>Done Building Project "\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Server\Server.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.15

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ChessBoardManager.cs" />
     <Compile Include="Cons.cs" />
+    <Compile Include="EventManager.cs" />
     <Compile Include="FormPlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +61,7 @@
     <Compile Include="FormStart.Designer.cs">
       <DependentUpon>FormStart.cs</DependentUpon>
     </Compile>
+    <Compile Include="Message.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
