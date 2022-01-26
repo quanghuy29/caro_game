@@ -114,6 +114,7 @@ namespace Client
                 {
                     MessageBox.Show("Login failed!");
                     userNameBox.ReadOnly = false;
+                    passwdTextbox.ReadOnly = false;
                     loginButton.Enabled = true;
                     client.closeSocket();
                 }
