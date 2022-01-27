@@ -12,6 +12,7 @@
 #include <process.h>
 #include <windows.h>
 #include <conio.h>
+#include "Room.h"
 #include <vector>
 #include <iostream>
 #pragma comment (lib,"ws2_32.lib")
@@ -24,12 +25,6 @@
 #define SIZE 100
 #define NAME_SIZE 20
 #define LENGTHDATA 4
-#define CHALLENGE '1'
-#define ACCEPT '2'
-#define REFUSE '3'
-#define STEP '4'
-#define RESULT '5'
-#define ERR '6'
 #define ENDING_DELIMITER "\r\n"
 
 struct playerInfo {
@@ -55,15 +50,31 @@ struct package {
 	char payload[BUFF_MAX];
 };
 
+struct UserLogin {
+	char *username;
+	SOCKET s;
+
+	UserLogin(char *name, SOCKET S) {
+		username = name;
+		s = S;
+	}
+};
+
 /* Function Prototype */
-int Receive(Player, char *, char *);
-int Send(Player, char *, char *);
-//void splitReceiveData(char *, package);
-void splitReceiveData(Player *, char *);
+int Receive(Player, char *, package *);
+int Send(SOCKET, char *, char *);
 void handleDataReceive(Player *, package);
 void convertIntToChar(int value, char des[]);
 
-int login(Player *, package);
+void login(Player *, package);
 int logout(Player *, package);
+void getListUser(char *, char *);
+SOCKET getSocket(char *);
+void removeRoom(SOCKET);
 
+//challenge
+void sendChallenge(Player *, char *, char *);
+void receiveChallenge(Player *, char *, char *);
+void refuseChallenge(char *, char *, char *);
+void sendCoordinates(Player *, char *, char *);
 #endif

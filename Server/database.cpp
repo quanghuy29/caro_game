@@ -154,9 +154,9 @@ int getUser(char *username, playerInfo* user) {
 	return 1;
 }
 
-int getSocketUser(char *username, SOCKET s) {
-	string SQLQuery = "SELECT socket FROM information WHERE username='" + string(username) + "'";
-	char *socket;
+int getRank(char *username) {
+	int rank;
+	string SQLQuery = "SELECT rank FROM information WHERE username='" + string(username) + "'";
 	if (connectDB()) {
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
 		{
@@ -168,13 +168,35 @@ int getSocketUser(char *username, SOCKET s) {
 		else
 		{
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, socket, sizeof(socket), NULL);
+				SQLGetData(SQLStatementHandle, 1, SQL_C_ULONG, &rank, 0, NULL);
 			}
 		}
 	}
-	s = (SOCKET) socket;
 	disconnectDB();
-	return 1;
+	return rank;
+}
+
+int getStatusFree(char *username) {
+	int isFree, status;
+	string SQLQuery = "SELECT rank, status FROM information WHERE username='" + string(username) + "'";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+			return 0;
+		}
+		else
+		{
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_ULONG, &isFree, 0, NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_ULONG, &status, 0, NULL);
+			}
+		}
+	}
+	disconnectDB();
+	return (isFree && status);
 }
 
 //bool setUser(playerInfo* user) {}
@@ -263,11 +285,11 @@ void updateRank() {
 	disconnectDB();
 }
 
-string getAllPlayer() {
+string getAllPlayer(char *username) {
 	string resutlAllPlayer = "";
-	string SQLQuery = "SELECT username FROM information";
+	string SQLQuery = "SELECT username FROM information WHERE status=1 AND username NOT IN ('" + string(username) + "')";
 	if (connectDB()) {
-		char username[30];
+		char user[30];
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
 		{
 			// Executes a preparable statement
@@ -276,14 +298,15 @@ string getAllPlayer() {
 		else
 		{
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &username, sizeof(username), NULL);
-				resutlAllPlayer = resutlAllPlayer + username + " ";
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &user, sizeof(user), NULL);
+				resutlAllPlayer = resutlAllPlayer + user + " ";
 			}
 		}
 	}
 	disconnectDB();
 	return resutlAllPlayer;
 }
+
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 {
 	SQLCHAR SQLState[1024];

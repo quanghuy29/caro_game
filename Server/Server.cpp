@@ -65,7 +65,8 @@ int main() {
 
 	*/
 
-	char recvBuff[BUFF_SIZE], mainBuff[BUFF_MAX];
+	char mainBuff[BUFF_MAX];
+	package messReceive;
 	SOCKET connSock;
 	sockaddr_in clientAddr;
 	int clientAddrLen = sizeof(clientAddr);
@@ -122,18 +123,18 @@ int main() {
 				break;
 			}
 
-			ZeroMemory(&recvBuff, sizeof(recvBuff));
+			ZeroMemory(&messReceive, sizeof(messReceive));
 			mainBuff[0] = 0;
-			ret = Receive(listClientConnect[index], mainBuff, recvBuff);
+			ret = Receive(listClientConnect[index], mainBuff, &messReceive);
 			while (ret) {
 				if (ret == 2) {
-					splitReceiveData(&listClientConnect[index], recvBuff);
+					handleDataReceive(&listClientConnect[index], messReceive);
 					break;
 				}
 				else {
-					splitReceiveData(&listClientConnect[index], recvBuff);
-					ZeroMemory(&recvBuff, sizeof(recvBuff));
-					ret = Receive(listClientConnect[index], mainBuff, recvBuff);
+					handleDataReceive(&listClientConnect[index], messReceive);
+					ZeroMemory(&messReceive, sizeof(messReceive));
+					ret = Receive(listClientConnect[index], mainBuff, &messReceive);
 				}
 			}
 
@@ -157,7 +158,6 @@ int main() {
 		if (sockEvent.lNetworkEvents & FD_CLOSE) {
 			if (sockEvent.iErrorCode[FD_CLOSE_BIT] != 0) {
 				printf("FD_CLOSE failed with error %d\n", sockEvent.iErrorCode[FD_CLOSE_BIT]);
-				break;
 			}
 			//Release socket and event
 			closesocket(listClientConnect[index].s);

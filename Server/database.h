@@ -1,7 +1,7 @@
 #ifndef _DATABASE_
 #define _DATABASE_
 
-#pragma once
+//#pragma once
 #include "server.h"
 #include <windows.h>
 #include <sqlext.h>
@@ -28,14 +28,15 @@ void disconnectDB();
 
 void updateUserIsFree(Player* player, int isFree);
 int getUser(char *username, playerInfo* user);
-int getSocketUser(char *username, SOCKET s);
-bool setUser(playerInfo* user);
+int getRank(char *username);
+int getStatusFree(char *username);
+//bool setUser(playerInfo* user);
 void updateUserStatus(char *username, int status);
 void updateRank();
 void updateScoreOfPlayer(Player* player, int win);
 int userLogin(char *username, char *password);
 
-string getAllPlayer();
+string getAllPlayer(char *);
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);
 
 #endif

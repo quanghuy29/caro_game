@@ -14,8 +14,7 @@ int** Room::createMatrix() {
 	return matrixChess;
 }
 
-Room::Room(int idRoom, SOCKET clientFirst, SOCKET clientSecond) {
-	roomId = idRoom;
+Room::Room(SOCKET clientFirst, SOCKET clientSecond) {
 	client1 = clientFirst;
 	client2 = clientSecond;
 	matrixRoom = createMatrix();
@@ -28,19 +27,6 @@ void Room::addClient(SOCKET clientFirst, SOCKET clientSecond) {
 
 void Room::updateMatrix(Coordinates coordinates, int value) {
 	matrixRoom[coordinates.y][coordinates.x] = value;
-	printf("%d ", 0);
-	for (int j = 0; j < CHESS_WIDTH; j++) {
-		printf("%d ", j);
-	}
-	printf("\n");
-	for (int i = 0; i < CHESS_HEIGHT; i++) {
-		printf("%d ", i);
-		for (int j = 0; j < CHESS_WIDTH; j++) {
-			printf("%d ", matrixRoom[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
 }
 
 int Room::isEndGame(Coordinates coordinates) {
@@ -167,10 +153,4 @@ bool Room::isEndByFullMatrix() {
 		}
 	}
 	return 1;
-}
-
-void Room::exitRoom() {
-	client1 = 0;
-	client2 = 0;
-	matrixRoom = createMatrix();
 }

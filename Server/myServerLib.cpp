@@ -1,6 +1,9 @@
-#include "server.h"
+﻿#include "server.h"
 #include "database.h"
 #include "Room.h"
+
+vector<Room> listRooms;
+vector<UserLogin> listUserLogin;
 
 void convertIntToChar(int value, char des[]) {
 	for (int i = 3; i > -1; i--) {
@@ -23,36 +26,36 @@ Returns
 
 */
 
-int Receive(Player s, char *dataIn, char *dataOut) {
+int Receive(Player s, char *dataIn, package *mess) {
 
-	char dataRecv[BUFF_SIZE], buff[BUFF_MAX], buffReturn[BUFF_MAX], dataRight[BUFF_MAX];
+	char dataRecv[BUFF_SIZE], buff[BUFF_MAX], buffReturn[BUFF_MAX], length[5];
 	long ret = 0;
-	long location = 0;
+	long lenData = 0;
 
 	strcpy(buff, dataIn);
 	long idx = strlen(buff);
-
-	if (idx > 0) {
-		for (long i = 0; i < idx - 1; i++) {
-			if ((buff[i] == '\r') && (buff[i + 1] == '\n')) {
-				strncpy_s(buffReturn, buff + 0, i);
-				i += 2;
-				if (idx > i) {
-					strncpy_s(dataRight, buff + i, idx - i);
-					dataIn[0] = 0;
-					strcat(dataIn, dataRight);
-					idx = strlen(buff);
+	//return 0;
+	if (idx > 4) {
+		strncpy_s(length, dataIn + 1, 4);
+		lenData = atoi(length);
+		if (idx - 5 >= lenData) {
+			mess->opcode = buff[0];
+			strcat_s(mess->length, length);
+			strncpy_s(mess->payload, buff + 5, lenData);
+			if (idx - 5 == lenData) {
+				dataIn[0] = 0;
+				return 2;
+			}
+			else
+			{
+				dataIn[0] = 0;
+				long location = lenData + 5;
+				for (long j = 0; j < idx - location; j++) {
+					dataIn[j] = buff[j + location];
 				}
-				else
-				{
-					dataIn[0] = 0;
-				}
-				dataOut[0] = 0;
-				strcpy(dataOut, buffReturn);
 				return 1;
 			}
 		}
-		location = idx;
 	}
 
 	while (1) {
@@ -69,33 +72,30 @@ int Receive(Player s, char *dataIn, char *dataOut) {
 		}
 		else {
 			dataRecv[ret] = 0;
-			for (long i = 0; i < ret; i++) {
-				buff[idx++] = dataRecv[i];
-			}
+			strcat_s(buff, dataRecv);
 		}
-		for (long i = location; i < idx - 1; i++) {
-			if ((buff[i] == '\r') && (buff[i + 1] == '\n')) {
-				dataOut[0] = 0;
-				for (long j = 0; j < i; j++) {
-					dataOut[j] = buff[j];
+		idx = strlen(buff);
+		strncpy_s(length, buff + 1, 4);
+		lenData = atoi(length);
+		if (idx - 5 >= lenData) {
+			mess->opcode = buff[0];
+			strcat_s(mess->length, length);
+			strncpy_s(mess->payload, buff + 5, lenData);
+			if (idx - 5 == lenData) {
+				dataIn[0] = 0;
+				return 2;
+			}
+			else
+			{
+				dataIn[0] = 0;
+				long location = lenData + 5;
+				for (long j = 0; j < idx - location; j++) {
+					dataIn[j] = buff[j + location];
 				}
-				i += 2;
-				if (idx > i) {
-					dataIn[0] = 0;
-					for (long j = 0; j < idx - i; j++) {
-						dataIn[j] = buff[j + i];
-					}
-					return 1;
-				}
-				else
-				{
-					dataIn[0] = 0;
-					return 2;
-				}
+				return 1;
 			}
 		}
 	}
-
 	return 0;
 }
 
@@ -108,7 +108,7 @@ Returns 0 on error and 1 on success
 
 */
 
-int Send(Player s, char *opcode, char *dataIn) {
+int Send(SOCKET s, char *opcode, char *dataIn) {
 	long ret = 0, idx, lenData;
 	char dataSend[BUFF_SIZE], lengthPay[5];
 
@@ -118,17 +118,15 @@ int Send(Player s, char *opcode, char *dataIn) {
 	strcpy(dataSend, opcode);
 	strcat(dataSend, lengthPay);
 	strcat(dataSend, dataIn);
-	strcat(dataSend, ENDING_DELIMITER);
 
 	lenData = strlen(dataSend);
 	long leftBytes = lenData;
 	idx = 0;
 	while (leftBytes > 0) {
-		ret = send(s.s, &dataSend[idx], leftBytes, 0);
+		ret = send(s, &dataSend[idx], leftBytes, 0);
 		if (ret == SOCKET_ERROR)
 		{
 			printf("Error: %d! Cannot send message.\n", WSAGetLastError);
-			_getch();
 			return 0;
 		}
 		idx += ret;
@@ -144,43 +142,45 @@ int Send(Player s, char *opcode, char *dataIn) {
 
 */
 
-void splitReceiveData(Player *player, char *dataIn) {
-	char opcode[2], lengthPay[5], payload[BUFF_MAX];
-	package mess;
-	int lenData = 0;
-	mess.opcode = dataIn[0];
-	strncpy_s(mess.length, dataIn + 1, 4);
-	lenData = atoi(mess.length);
-	strncpy_s(mess.payload, dataIn + 5, lenData);
-	handleDataReceive(player, mess);
-}
-
 void handleDataReceive(Player *player, package mess) {
+	char payload[BUFF_SIZE];
+	char opcode[2];
+	opcode[0] = mess.opcode;
+	opcode[1] = 0;
 	switch (mess.opcode)
 	{
+	case '0':
+		
+		break;
 	case '1':
 		login(player, mess);
 		break;
 	case '2':
+		Send(player->s, "2", (char*)getAllPlayer(player->playerinfo.username).c_str());
 		break;
 	case '3':
+		sendChallenge(player, mess.payload, opcode);
 		break;
 	case '4':
+		receiveChallenge(player, mess.payload, opcode);
 		break;
 	case '5':
+		refuseChallenge(player->playerinfo.username, mess.payload, opcode);
 		break;
 	case '6':
+		sendCoordinates(player, opcode, mess.payload);
 		break;
 	case '9':
-		logout(player, mess);
+		_itoa(logout(player, mess), payload, 10);
+		Send(player->s, opcode, payload);
 		break;
 	default:
 		break;
 	}
 }
 
-int login(Player *player, package mess) {
-	if (player->isLogin == 1) return 13;
+void login(Player *player, package mess) {
+	if (player->isLogin == 1) Send(player->s, "1", "1");
 	char *username, *password;
 	username = strtok(mess.payload, " ");
 	password = strtok(NULL, "\n");
@@ -188,8 +188,12 @@ int login(Player *player, package mess) {
 	if (ret == 10) {
 		player->isLogin = 1;
 		getUser(username, &(player->playerinfo));
+		UserLogin user = UserLogin(player->playerinfo.username, player->s);
+		listUserLogin.push_back(user);
+		Send(player->s, "1", "0");
+		//Send(player->s, "2", (char*)getAllPlayer(player->playerinfo.username).c_str());
 	}
-	return 1;
+	Send(player->s, "1", "1");
 	//return userLogin(username, password);
 }
 
@@ -198,7 +202,121 @@ int logout(Player *player, package mess) {
 		player->isLogin = 0;
 		updateUserIsFree(player, 1);
 		updateUserStatus(player->playerinfo.username, 0);
-		return 90;
+		int index;
+		for (int i = 0; i < listUserLogin.size(); i++) {
+			if (listUserLogin[i].s == player->s) {
+				index = i;
+			}
+		}
+		//remove in listUserLogin
+		listUserLogin.erase(listUserLogin.begin() + index);
+		return 0;
 	}
-	else return 91;
+	else return 1;
 }
+
+void getListUser(char *username, char *payload) {
+	payload = (char*)getAllPlayer(username).c_str();
+}
+
+Room getRoom(SOCKET client) {
+	for (int i = 0; i < listRooms.size(); i++)
+	{
+		if (listRooms[i].client1 == client || listRooms[i].client2 == client)
+			return listRooms[i];
+	}
+}
+
+SOCKET getSocket(char *username) {
+	for (int i = 0; i < listUserLogin.size(); i++) {
+		if (strcmp(listUserLogin[i].username, username) == 0) {
+			return listUserLogin[i].s;
+		}
+	}
+}
+
+Coordinates getCoordinates(char *data) {
+	char *x, *y;
+	x = strtok(data, " ");
+	y = strtok(NULL, "\n");
+	Coordinates coordinates(atoi(x), atoi(y));
+	return coordinates;
+}
+
+void sendChallenge(Player *player, char *usernameRecv, char *opcode) {
+	SOCKET s = getSocket(usernameRecv);
+	if (getStatusFree(usernameRecv)) {
+		if (abs(getRank(player->playerinfo.username) - getRank(usernameRecv)) <= 10) {
+			Send(s, opcode, player->playerinfo.username);
+		}
+		else
+		{
+			Send(player->s, "8", "1");
+		}
+	}
+	else
+	{
+		Send(player->s, "8", "2");
+	}
+}
+
+void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
+	SOCKET s = getSocket(usernameRecv);
+	Send(s, opcode, "");
+	//add room
+	Room room = Room(s, player->s);
+	listRooms.push_back(room);
+}
+
+void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
+	SOCKET s = getSocket(usernameRecv);
+	Send(s, opcode, usernameSend);
+}
+
+void sendCoordinates(Player *player, char *opcode, char *payload) {
+	char *buff;
+	strcat(buff, payload);
+	Room room = getRoom(player->s);
+	Coordinates coordinate = getCoordinates(payload);
+	SOCKET clientRecv;
+	if (room.client1 == player->s) {
+		clientRecv = room.client2;
+		room.updateMatrix(coordinate, 1);
+	}
+	else
+	{
+		clientRecv = room.client1;
+		room.updateMatrix(coordinate, 2);
+	}
+	Send(clientRecv, opcode, buff);
+
+	switch (room.isEndGame(coordinate))
+	{
+	case 0:
+		break;
+	case 1:
+		Send(player->s, opcode, player->playerinfo.username);
+		Send(clientRecv, opcode, player->playerinfo.username);
+		removeRoom(player->s);
+		break;
+	case 2:
+		Send(player->s, opcode, "");
+		Send(clientRecv, opcode, "");
+		break;
+	default:
+		break;
+	}
+}
+
+void removeRoom(SOCKET s) {
+	int index;
+	for (int i = 0; i < listRooms.size(); i++) {
+		if (listRooms[i].client1 == s || listRooms[i].client2 == s) {
+			index = i;
+		}
+	}
+	//remove in listRooms
+	listRooms.erase(listRooms.begin() + index);
+}
+
+
