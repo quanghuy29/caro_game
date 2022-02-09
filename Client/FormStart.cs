@@ -59,7 +59,7 @@ namespace Client
                 if (client.connectServer())
                 {
                     string payload = yourName + Cons.SPACE + passwdTextbox.Text;
-                    Message mess = new Message(Cons.LOGIN, payload.Length.ToString(Cons.SAMPLE), payload);
+                    Message mess = new Message(Cons.LOGIN, payload.Length.ToString(Cons.SAMPLE_0000), payload);
                     client.sendData(mess.convertToString());
                     client.ListenThread(eventManager);
                 }
@@ -81,14 +81,14 @@ namespace Client
             if (dialogResult == DialogResult.Yes)
             {
                 logoutButton.Enabled = false;
-                Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE, "");
+                Message mess = new Message(Cons.LOGOUT, Cons.SAMPLE_0000, "");
                 client.sendData(mess.convertToString());
                 client.ListenThread(eventManager);
             }
         }
 
         private void buttonReloadList_Click(object sender, EventArgs e) {
-            Message mess = new Message(Cons.LIST, Cons.SAMPLE, "");
+            Message mess = new Message(Cons.LIST, Cons.SAMPLE_0000, "");
             client.sendData(mess.convertToString());
             client.ListenThread(eventManager);
 
@@ -193,14 +193,14 @@ namespace Client
                 
                 if (dialogResult == DialogResult.Yes)
                 {
-                    Message mess = new Message(Cons.ACCEPT, otherName.Length.ToString(Cons.SAMPLE), otherName);
+                    Message mess = new Message(Cons.ACCEPT, otherName.Length.ToString(Cons.SAMPLE_0000), otherName);
                     client.sendData(mess.convertToString());
 
                     client.ListenThread(eventManager);
                 }
                 else if (dialogResult == DialogResult.No)
                 {
-                    Message mess = new Message(Cons.REFUSE, otherName.Length.ToString(Cons.SAMPLE), otherName);
+                    Message mess = new Message(Cons.REFUSE, otherName.Length.ToString(Cons.SAMPLE_0000), otherName);
                     client.sendData(mess.convertToString());
                 }                
             }));

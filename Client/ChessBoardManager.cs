@@ -120,7 +120,7 @@ namespace Client
                         Height = Cons.BUTTON_HEIGHT,
                         Location = new Point(oldButton.Location.X + oldButton.Width, oldButton.Location.Y),
                         BackgroundImageLayout = ImageLayout.Stretch,
-                        Tag = i.ToString(Cons.SAMPLE) + j.ToString(Cons.SAMPLE)
+                        Tag = i.ToString(Cons.SAMPLE_00) + j.ToString(Cons.SAMPLE_00)
                     };
                     btn.Click += Btn_Click;
                     boardChess.Controls.Add(btn);
@@ -162,7 +162,7 @@ namespace Client
                 return;
 
             Point point = getChessPoint(btn);
-            Message = new Message(Cons.MOVE, (2 * Cons.LENGTH_SIZE).ToString(Cons.SAMPLE), point.X, point.Y);
+            Message = new Message(Cons.MOVE, (2 * Cons.LOCATION_SIZE).ToString(Cons.SAMPLE_0000), point.X, point.Y);
             client.sendData(Message.convertToString());
 
             Mark(btn);

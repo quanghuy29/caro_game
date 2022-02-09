@@ -67,7 +67,7 @@ namespace Client
             DialogResult dialogResult = MessageBox.Show("Do you want to surrender?", "Question", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
-                Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "");
+                Message mess = new Message(Cons.MOVE, Cons.SAMPLE_0000, "");
                 client.sendData(mess.convertToString());
                 client.ListenThread(eventManager);
             }         
@@ -79,7 +79,7 @@ namespace Client
         }
 
         private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {            
-            Message mess = new Message(Cons.MOVE, Cons.SAMPLE, "1");
+            Message mess = new Message(Cons.MOVE, Cons.SAMPLE_0000, "1");
             client.sendData(mess.convertToString());
 
             client.ListenThread(eventManager);

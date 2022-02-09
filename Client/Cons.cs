@@ -15,7 +15,8 @@ namespace Client
         public static int OPCODE_SIZE = 1;
         public static int LENGTH_SIZE = 4;
         public static int LOCATION_SIZE = 2;
-        public static string SAMPLE = "0000";
+        public static string SAMPLE_0000 = "0000";
+        public static string SAMPLE_00 = "00";
         public static string SPACE = " ";
 
         public static string IP = "127.0.0.1";

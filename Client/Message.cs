@@ -51,7 +51,7 @@ namespace Client
         public Message(string opcode, string length, int locationX, int locationY) {
             this.Opcode = opcode;
             this.Length = length;
-            this.Payload = locationX.ToString(Cons.SAMPLE) + locationY.ToString(Cons.SAMPLE);
+            this.Payload = locationX.ToString(Cons.SAMPLE_00) + locationY.ToString(Cons.SAMPLE_00);
         }
 
         public Message(string message) {
