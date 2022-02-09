@@ -102,7 +102,7 @@ namespace Client
         private void ButtonEnter_Click(object sender, EventArgs e) {                      
             string name = NamePlayer[1].Text;
 
-            Message mess = new Message(Cons.CHALLENGE, name.Length.ToString(Cons.SAMPLE), name);
+            Message mess = new Message(Cons.CHALLENGE, name.Length.ToString(Cons.SAMPLE_0000), name);
             client.sendData(mess.convertToString());
 
             ButtonEnter.Visible = false;
@@ -112,7 +112,7 @@ namespace Client
         private void ButtonCancel_Click(object sender, EventArgs e) {
             string name = NamePlayer[1].Text;
 
-            Message mess = new Message(Cons.CANCEL, name.Length.ToString(Cons.SAMPLE), name);
+            Message mess = new Message(Cons.CANCEL, name.Length.ToString(Cons.SAMPLE_0000), name);
             client.sendData(mess.convertToString());
 
             ButtonEnter.Visible = true;
