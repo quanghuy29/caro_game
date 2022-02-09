@@ -115,8 +115,8 @@ int userLogin(char *username, char *password) {
 	
 }
 
-void updateUserIsFree(Player* player, int isFree) {
-	string SQLQuery = "UPDATE information SET isFree=" + to_string(isFree) + " WHERE username='" + string(player->playerinfo.username) + "'";
+void updateUserIsFree(char *username, int isFree) {
+	string SQLQuery = "UPDATE information SET isFree=" + to_string(isFree) + " WHERE username='" + string(username) + "'";
 	if (connectDB()) {
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
 		{
@@ -126,32 +126,6 @@ void updateUserIsFree(Player* player, int isFree) {
 		}
 	}
 	disconnectDB();
-}
-
-int getUser(char *username, playerInfo* user) {
-	string SQLQuery = "SELECT * FROM information WHERE username='" + string(username) + "'";
-	if (connectDB()) {
-		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
-		{
-			// Executes a preparable statement
-			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
-			disconnectDB();
-			return 0;
-		}
-		else
-		{
-			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &(user->username), sizeof(user->username), NULL);
-				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &(user->password), sizeof(user->password), NULL);
-				SQLGetData(SQLStatementHandle, 3, SQL_C_ULONG, &(user->score), 0, NULL);
-				SQLGetData(SQLStatementHandle, 4, SQL_C_ULONG, &(user->rank), 0, NULL);
-				SQLGetData(SQLStatementHandle, 7, SQL_C_ULONG, &(user->isFree), 0, NULL);
-				SQLGetData(SQLStatementHandle, 8, SQL_C_ULONG, &(user->status), 0, NULL);
-			}
-		}
-	}
-	disconnectDB();
-	return 1;
 }
 
 int getRank(char *username) {
@@ -199,6 +173,28 @@ int getStatusFree(char *username) {
 	return (isFree && status);
 }
 
+int getScore(char *username) {
+	int score;
+	string SQLQuery = "SELECT score FROM information WHERE username='" + string(username) + "'";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+			return 0;
+		}
+		else
+		{
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_ULONG, &score, 0, NULL);
+			}
+		}
+	}
+	disconnectDB();
+	return (score);
+}
+
 //bool setUser(playerInfo* user) {}
 
 void updateUserStatus(char *username, int status) {
@@ -213,26 +209,28 @@ void updateUserStatus(char *username, int status) {
 	disconnectDB();
 }
 
-void updateScoreOfPlayer(Player* player, int win) {
-	int score = player->playerinfo.score;
-	if (win) {
-		score += SCORE;
-	}
-	else
-	{
-		score -= SCORE;
-		if (score < 0) score = 0;
-	}
-	
-	string SQLQuery = "UPDATE information SET score=" + to_string(score) + " WHERE username='" + player->playerinfo.username + "'";
-	if (connectDB()) {
-		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
-		{
-			// Executes a preparable statement
-			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+void updateScoreOfPlayer(char *username, int win) {
+	int score = getScore(username);
+	if (win < 2) {
+		if (win) {
+			score += SCORE;
 		}
+		else 
+		{
+			score -= SCORE;
+			if (score < 0) score = 0;
+		}
+
+		string SQLQuery = "UPDATE information SET score=" + to_string(score) + " WHERE username='" + username + "'";
+		if (connectDB()) {
+			if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+			{
+				// Executes a preparable statement
+				showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			}
+		}
+		disconnectDB();
 	}
-	disconnectDB();
 }
 
 void updateRank() {

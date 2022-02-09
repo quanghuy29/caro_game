@@ -26,14 +26,14 @@ struct userScore{
 bool connectDB();
 void disconnectDB();
 
-void updateUserIsFree(Player* player, int isFree);
-int getUser(char *username, playerInfo* user);
+void updateUserIsFree(char *username, int isFree);
 int getRank(char *username);
 int getStatusFree(char *username);
+int getScore(char *username);
 //bool setUser(playerInfo* user);
 void updateUserStatus(char *username, int status);
 void updateRank();
-void updateScoreOfPlayer(Player* player, int win);
+void updateScoreOfPlayer(char *username, int win);
 int userLogin(char *username, char *password);
 
 string getAllPlayer(char *);

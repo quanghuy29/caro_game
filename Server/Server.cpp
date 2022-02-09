@@ -55,16 +55,6 @@ int main() {
 
 	printf("Server started!\n");
 
-	/*test function
-	Player playerTest;
-	while (1) {
-		char testUser[20] = "meobeo123";
-		char pass[20] = "1234567";
-		int meoTest = userLogin(testUser, pass);
-	}
-
-	*/
-
 	char mainBuff[BUFF_MAX];
 	package messReceive;
 	SOCKET connSock;
@@ -140,7 +130,8 @@ int main() {
 
 			//Release socket and event if an error occurs
 			if (ret <= 0) {
-				//ret = Send(listClientConnect[index], serverPackage);
+				removeUser(listClientConnect[index].s);
+				logout(&listClientConnect[index]);
 				closesocket(listClientConnect[index].s);
 				WSAResetEvent(events[index]);
 				listClientConnect[index].s = listClientConnect[nEvents - 1].s;
@@ -160,6 +151,8 @@ int main() {
 				printf("FD_CLOSE failed with error %d\n", sockEvent.iErrorCode[FD_CLOSE_BIT]);
 			}
 			//Release socket and event
+			removeUser(listClientConnect[index].s);
+			logout(&listClientConnect[index]);
 			closesocket(listClientConnect[index].s);
 			WSAResetEvent(events[index]);
 			listClientConnect[index].s = listClientConnect[nEvents - 1].s;

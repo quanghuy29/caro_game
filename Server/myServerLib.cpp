@@ -156,7 +156,7 @@ void handleDataReceive(Player *player, package mess) {
 		login(player, mess);
 		break;
 	case '2':
-		Send(player->s, "2", (char*)getAllPlayer(player->playerinfo.username).c_str());
+		Send(player->s, "2", (char*)getAllPlayer(player->username).c_str());
 		break;
 	case '3':
 		sendChallenge(player, mess.payload, opcode);
@@ -165,13 +165,13 @@ void handleDataReceive(Player *player, package mess) {
 		receiveChallenge(player, mess.payload, opcode);
 		break;
 	case '5':
-		refuseChallenge(player->playerinfo.username, mess.payload, opcode);
+		refuseChallenge(player->username, mess.payload, opcode);
 		break;
 	case '6':
 		sendCoordinates(player, opcode, mess.payload);
 		break;
 	case '9':
-		_itoa(logout(player, mess), payload, 10);
+		_itoa(logout(player), payload, 10);
 		Send(player->s, opcode, payload);
 		break;
 	default:
@@ -187,33 +187,43 @@ void login(Player *player, package mess) {
 	int ret = userLogin(username, password);
 	if (ret == 10) {
 		player->isLogin = 1;
-		getUser(username, &(player->playerinfo));
-		UserLogin user = UserLogin(player->playerinfo.username, player->s);
+		UserLogin user = UserLogin(player->username, player->s);
 		listUserLogin.push_back(user);
 		Send(player->s, "1", "0");
-		//Send(player->s, "2", (char*)getAllPlayer(player->playerinfo.username).c_str());
+		Send(player->s, "2", (char*)getAllPlayer(player->username).c_str());
 	}
-	Send(player->s, "1", "1");
+	else {
+		Send(player->s, "1", "1");
+	}
 	//return userLogin(username, password);
 }
 
-int logout(Player *player, package mess) {
+int logout(Player *player) {
 	if (player->isLogin == 1) {
 		player->isLogin = 0;
-		updateUserIsFree(player, 1);
-		updateUserStatus(player->playerinfo.username, 0);
-		int index;
+		updateUserIsFree(player->username, 1);
+		updateUserStatus(player->username, 0);
+		int index = -1;
 		for (int i = 0; i < listUserLogin.size(); i++) {
 			if (listUserLogin[i].s == player->s) {
 				index = i;
 			}
 		}
 		//remove in listUserLogin
-		listUserLogin.erase(listUserLogin.begin() + index);
-		return 0;
+		if (index > -1) {
+			listUserLogin.erase(listUserLogin.begin() + index);
+			return 0;
+		}
 	}
 	else return 1;
 }
+
+/*
+void giveUp(Player *player) {
+	Room room = getRoom(player->s);
+
+}
+*/
 
 void getListUser(char *username, char *payload) {
 	payload = (char*)getAllPlayer(username).c_str();
@@ -224,6 +234,14 @@ Room getRoom(SOCKET client) {
 	{
 		if (listRooms[i].client1 == client || listRooms[i].client2 == client)
 			return listRooms[i];
+	}
+}
+
+UserLogin getUserLogin(SOCKET client) {
+	for (int i = 0; i < listUserLogin.size(); i++) {
+		if (listUserLogin[i].s == client) {
+			return listUserLogin[i];
+		}
 	}
 }
 
@@ -246,77 +264,113 @@ Coordinates getCoordinates(char *data) {
 void sendChallenge(Player *player, char *usernameRecv, char *opcode) {
 	SOCKET s = getSocket(usernameRecv);
 	if (getStatusFree(usernameRecv)) {
-		if (abs(getRank(player->playerinfo.username) - getRank(usernameRecv)) <= 10) {
-			Send(s, opcode, player->playerinfo.username);
+		if (abs(getRank(player->username) - getRank(usernameRecv)) <= 10) {
+			Send(s, opcode, player->username);
 		}
 		else
 		{
-			Send(player->s, "8", "1");
+			Send(player->s, ERR, "1");
 		}
 	}
 	else
 	{
-		Send(player->s, "8", "2");
+		Send(player->s, ERR, "2");
 	}
 }
 
 void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
 	SOCKET s = getSocket(usernameRecv);
-	Send(s, opcode, "");
+	Send(s, opcode, player->username);
+	Send(player->s, opcode, "");
 	//add room
 	Room room = Room(s, player->s);
 	listRooms.push_back(room);
 }
 
 void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
-	SOCKET s = getSocket(usernameRecv);
-	Send(s, opcode, usernameSend);
+	SOCKET s1 = getSocket(usernameRecv);
+	Send(s1, opcode, usernameSend);
+	SOCKET s2 = getSocket(usernameSend);
+	Send(s2, opcode, "");
 }
 
 void sendCoordinates(Player *player, char *opcode, char *payload) {
-	char *buff;
+	char buff[BUFF_SIZE];
 	strcat(buff, payload);
 	Room room = getRoom(player->s);
-	Coordinates coordinate = getCoordinates(payload);
 	SOCKET clientRecv;
-	if (room.client1 == player->s) {
-		clientRecv = room.client2;
-		room.updateMatrix(coordinate, 1);
+
+	if (strlen(payload) > 0) {
+		Coordinates coordinate = getCoordinates(payload);
+		if (room.client1 == player->s) {
+			clientRecv = room.client2;
+			room.updateMatrix(coordinate, 1);
+		}
+		else
+		{
+			clientRecv = room.client1;
+			room.updateMatrix(coordinate, 2);
+		}
+		Send(clientRecv, opcode, buff);
+
+		switch (room.isEndGame(coordinate))
+		{
+		case 0:
+			break;
+		case 1:
+			Send(player->s, RESULT, player->username);
+			Send(clientRecv, RESULT, player->username);
+			updateScoreOfPlayer(player->username, 1);
+			removeRoom(player->s);
+			break;
+		case 2:
+			Send(player->s, RESULT, "");
+			Send(clientRecv, RESULT, "");
+			break;
+		default:
+			break;
+		}
 	}
 	else
 	{
-		clientRecv = room.client1;
-		room.updateMatrix(coordinate, 2);
+		if (room.client1 == player->s) {
+			clientRecv = room.client2;
+		}
+		else
+		{
+			clientRecv = room.client1;
+		}
+		UserLogin playerWin = getUserLogin(clientRecv);
+		Send(player->s, RESULT, playerWin.username);
+		Send(clientRecv, RESULT, playerWin.username);
 	}
-	Send(clientRecv, opcode, buff);
-
-	switch (room.isEndGame(coordinate))
-	{
-	case 0:
-		break;
-	case 1:
-		Send(player->s, opcode, player->playerinfo.username);
-		Send(clientRecv, opcode, player->playerinfo.username);
-		removeRoom(player->s);
-		break;
-	case 2:
-		Send(player->s, opcode, "");
-		Send(clientRecv, opcode, "");
-		break;
-	default:
-		break;
-	}
+	
 }
 
 void removeRoom(SOCKET s) {
-	int index;
+	int index = -1;
 	for (int i = 0; i < listRooms.size(); i++) {
 		if (listRooms[i].client1 == s || listRooms[i].client2 == s) {
 			index = i;
 		}
 	}
 	//remove in listRooms
-	listRooms.erase(listRooms.begin() + index);
+	if (index > -1) {
+		listRooms.erase(listRooms.begin() + index);
+	}
+}
+
+void removeUser(SOCKET s) {
+	int index = -1;
+	for (int i = 0; i < listUserLogin.size(); i++) {
+		if (listUserLogin[i].s == s) {
+			index = i;
+		}
+	}
+	//remove in listRooms
+	if (index > -1) {
+		listUserLogin.erase(listUserLogin.begin() + index);
+	}
 }
 
 

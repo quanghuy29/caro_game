@@ -25,23 +25,19 @@
 #define SIZE 100
 #define NAME_SIZE 20
 #define LENGTHDATA 4
-#define ENDING_DELIMITER "\r\n"
-
-struct playerInfo {
-	char username[30];
-	char password[30];
-	int score;
-	int rank;
-	int status;
-	int isFree;
-};
+#define CHALLENGE "3"
+#define ACCEPT "4"
+#define REFUSE "5"
+#define STEP "6"
+#define RESULT "7"
+#define ERR "8"
 
 struct Player {
 	SOCKET s;
 	char IPAddress[INET_ADDRSTRLEN];
 	int portAddress;
 	int isLogin = 0;
-	playerInfo playerinfo;
+	char username[30];
 };
 
 struct package {
@@ -67,10 +63,12 @@ void handleDataReceive(Player *, package);
 void convertIntToChar(int value, char des[]);
 
 void login(Player *, package);
-int logout(Player *, package);
+int logout(Player *);
+void giveUp(Player *);
 void getListUser(char *, char *);
 SOCKET getSocket(char *);
 void removeRoom(SOCKET);
+void removeUser(SOCKET);
 
 //challenge
 void sendChallenge(Player *, char *, char *);
