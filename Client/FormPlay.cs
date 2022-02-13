@@ -39,7 +39,8 @@ namespace Client
             {
                 panelBoard.Enabled = false;
                 client.ListenThread(eventManager);
-            }                    
+            }
+            client.ListenThread(eventManager);                    
         }
 
         private void EventManager_Result(object sender, SuperEventArgs e) {

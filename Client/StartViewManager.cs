@@ -77,7 +77,7 @@ namespace Client
         public void initPanelChallenge(Panel panelchallenge) {
             ButtonEnter = new Button()
             {
-                Text = "Challenge",
+                Text = "Invite",
                 Location = new Point(20, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
             };
             ButtonCancel = new Button()
