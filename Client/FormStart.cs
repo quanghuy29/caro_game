@@ -181,8 +181,12 @@ namespace Client
                 }
                 else if (e.ReturnCode == (int)Cons.command.ERROR)
                 {
-                    if (String.Compare(e.ReturnText, Cons.PL_BUSY.ToString()) == 0) MessageBox.Show("Player is playing!");
-                    else MessageBox.Show("Can't play with player has too high or too low rank!");
+                    if (String.Compare(e.ReturnText, Cons.PL_BUSY.ToString()) == 0)
+                        MessageBox.Show("Player is playing!");
+                    else if (String.Compare(e.ReturnText, Cons.PL_NOT_SUITABLE.ToString()) == 0)
+                        MessageBox.Show("Can't play with player has too high or too low rank!");
+                    else if ((String.Compare(e.ReturnText, Cons.PL_NOT_FOUND.ToString()) == 0))
+                        MessageBox.Show("Not found player!");
                 }
             }));
         }
