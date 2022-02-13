@@ -25,6 +25,7 @@ namespace Client
             client = new SocketManager();
             eventManager = new EventManager();
             startView = new StartViewManager(userNameBox, client, eventManager);
+            startView.initPanelChallenge(panelChallenge);
             yourName = userNameBox.Text;
 
             eventManager.Login += EventManager_Login;
@@ -170,6 +171,7 @@ namespace Client
                     logoutButton.Visible = false;
                     userNameBox.ReadOnly = false;
                     passwdTextbox.ReadOnly = false;
+                    startView.clearOtherName();
 
                     client.closeSocket();
 
