@@ -1,12 +1,16 @@
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\x64\debug\server.pdb
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\vc140.pdb
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\vc140.idb
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.obj
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\x64\debug\server.exe
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\x64\debug\server.ilk
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\link.read.1.tlog
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\link.command.1.tlog
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\link.write.1.tlog
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\cl.read.1.tlog
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\cl.command.1.tlog
-\\vmware-host\shared folders\desktop\tài liệu 20211\lập trình mạng\bai tap tuan\caro_game\caro_game\server\x64\debug\server.tlog\cl.write.1.tlog
+d:\caro_game\server\x64\debug\vc140.pdb
+d:\caro_game\server\x64\debug\vc140.idb
+d:\caro_game\server\x64\debug\database.obj
+d:\caro_game\server\x64\debug\myserverlib.obj
+d:\caro_game\server\x64\debug\room.obj
+d:\caro_game\server\x64\debug\server.obj
+d:\caro_game\x64\debug\server.ilk
+d:\caro_game\x64\debug\server.exe
+d:\caro_game\x64\debug\server.pdb
+d:\caro_game\server\x64\debug\myserverlib.obj.enc
+d:\caro_game\server\x64\debug\server.tlog\cl.command.1.tlog
+d:\caro_game\server\x64\debug\server.tlog\cl.read.1.tlog
+d:\caro_game\server\x64\debug\server.tlog\cl.write.1.tlog
+d:\caro_game\server\x64\debug\server.tlog\link.command.1.tlog
+d:\caro_game\server\x64\debug\server.tlog\link.read.1.tlog
+d:\caro_game\server\x64\debug\server.tlog\link.write.1.tlog

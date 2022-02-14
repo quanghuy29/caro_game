@@ -80,7 +80,7 @@ namespace Client
         }
 
         private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {            
-            Message mess = new Message(Cons.MOVE, Cons.SAMPLE_0000, "1");
+            Message mess = new Message(Cons.MOVE, Cons.SAMPLE_0000, "");
             client.sendData(mess.convertToString());
 
             client.ListenThread(eventManager);
