@@ -74,10 +74,10 @@ namespace Client
             
         }        
 
-        public void showPanelChallenge(Panel panelchallenge) {
+        public void initPanelChallenge(Panel panelchallenge) {
             ButtonEnter = new Button()
             {
-                Text = "Challenge",
+                Text = "Invite",
                 Location = new Point(20, NamePlayer[1].Location.Y + 2 * NamePlayer[1].Height)
             };
             ButtonCancel = new Button()
@@ -93,10 +93,18 @@ namespace Client
 
             ButtonEnter.Click += ButtonEnter_Click;
             ButtonCancel.Click += ButtonCancel_Click;
-        }        
+        }
+
+        public void showPanelChallenge(Panel panelchallenge) {
+            panelchallenge.Visible = true;
+        }
 
         public void hidePanelChallenge(Panel panelchallenge) {
             panelchallenge.Visible = false;
+        }
+
+        public void clearOtherName() {
+            NamePlayer[1].Text = "";
         }
 
         private void ButtonEnter_Click(object sender, EventArgs e) {                      
