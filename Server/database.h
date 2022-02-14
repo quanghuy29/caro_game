@@ -27,6 +27,8 @@ bool connectDB();
 void disconnectDB();
 
 void updateUserIsFree(char *username, int isFree);
+void updateUserChallenge(char *username, char *usernameChallenge);
+string getUserChallenge(char *username);
 int getRank(char *username);
 int getStatusFree(char *username);
 int getScore(char *username);

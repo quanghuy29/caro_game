@@ -36,7 +36,9 @@ namespace Client
 
         public static int PL_SUCCESS = 0;
         public static int PL_FAIL = 1;
+        public static int PL_NOT_SUITABLE = 1;
         public static int PL_BUSY = 2;
+        public static int PL_NOT_FOUND = 3;
 
         public enum command
         {

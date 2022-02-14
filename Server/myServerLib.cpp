@@ -150,7 +150,7 @@ void handleDataReceive(Player *player, package mess) {
 	switch (mess.opcode)
 	{
 	case '0':
-		
+		cancelChallenge(player);
 		break;
 	case '1':
 		login(player, mess);
@@ -179,6 +179,10 @@ void handleDataReceive(Player *player, package mess) {
 	}
 }
 
+void cancelChallenge(Player *player) {
+	updateUserChallenge(player->username, "");
+}
+
 void login(Player *player, package mess) {
 	if (player->isLogin == 1) Send(player->s, "1", "1");
 	char *username, *password;
@@ -187,6 +191,7 @@ void login(Player *player, package mess) {
 	int ret = userLogin(username, password);
 	if (ret == 10) {
 		player->isLogin = 1;
+		strcpy_s(player->username, username);
 		UserLogin user = UserLogin(player->username, player->s);
 		listUserLogin.push_back(user);
 		Send(player->s, "1", "0");
@@ -195,7 +200,6 @@ void login(Player *player, package mess) {
 	else {
 		Send(player->s, "1", "1");
 	}
-	//return userLogin(username, password);
 }
 
 int logout(Player *player) {
@@ -203,17 +207,9 @@ int logout(Player *player) {
 		player->isLogin = 0;
 		updateUserIsFree(player->username, 1);
 		updateUserStatus(player->username, 0);
-		int index = -1;
-		for (int i = 0; i < listUserLogin.size(); i++) {
-			if (listUserLogin[i].s == player->s) {
-				index = i;
-			}
-		}
 		//remove in listUserLogin
-		if (index > -1) {
-			listUserLogin.erase(listUserLogin.begin() + index);
-			return 0;
-		}
+		removeUser(player->s);
+		return 0;
 	}
 	else return 1;
 }
@@ -237,12 +233,21 @@ Room getRoom(SOCKET client) {
 	}
 }
 
-UserLogin getUserLogin(SOCKET client) {
+UserLogin getUserLoginBySocket(SOCKET client) {
 	for (int i = 0; i < listUserLogin.size(); i++) {
 		if (listUserLogin[i].s == client) {
 			return listUserLogin[i];
 		}
 	}
+}
+
+int getUserLoginByName(char *username) {
+	for (int i = 0; i < listUserLogin.size(); i++) {
+		if (strcmp(listUserLogin[i].username, username) == 0) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 SOCKET getSocket(char *username) {
@@ -254,97 +259,127 @@ SOCKET getSocket(char *username) {
 }
 
 Coordinates getCoordinates(char *data) {
-	char *x, *y;
-	x = strtok(data, " ");
-	y = strtok(NULL, "\n");
+	char x[3], y[3];
+	strncpy(y, data + 0, 2);
+	strncpy(x, data + 2, 2);
 	Coordinates coordinates(atoi(x), atoi(y));
 	return coordinates;
 }
 
 void sendChallenge(Player *player, char *usernameRecv, char *opcode) {
-	SOCKET s = getSocket(usernameRecv);
-	if (getStatusFree(usernameRecv)) {
-		if (abs(getRank(player->username) - getRank(usernameRecv)) <= 10) {
-			Send(s, opcode, player->username);
+	int index;
+	index = getUserLoginByName(usernameRecv);
+	if (index > -1) {
+		if (getStatusFree(usernameRecv) == 1) {
+			if (abs(getRank(player->username) - getRank(usernameRecv)) <= 10) {
+				updateUserChallenge(player->username, usernameRecv);
+				Send(listUserLogin[index].s, opcode, player->username);
+			}
+			else
+			{
+				Send(player->s, ERR, "1");
+			}
 		}
 		else
 		{
-			Send(player->s, ERR, "1");
+			Send(player->s, ERR, "2");
 		}
 	}
 	else
 	{
-		Send(player->s, ERR, "2");
+		Send(player->s, ERR, "1");
 	}
+	
 }
 
 void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
 	SOCKET s = getSocket(usernameRecv);
-	Send(s, opcode, player->username);
-	Send(player->s, opcode, "");
-	//add room
-	Room room = Room(s, player->s);
-	listRooms.push_back(room);
-}
-
-void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
-	SOCKET s1 = getSocket(usernameRecv);
-	Send(s1, opcode, usernameSend);
-	SOCKET s2 = getSocket(usernameSend);
-	Send(s2, opcode, "");
-}
-
-void sendCoordinates(Player *player, char *opcode, char *payload) {
-	char buff[BUFF_SIZE];
-	strcat(buff, payload);
-	Room room = getRoom(player->s);
-	SOCKET clientRecv;
-
-	if (strlen(payload) > 0) {
-		Coordinates coordinate = getCoordinates(payload);
-		if (room.client1 == player->s) {
-			clientRecv = room.client2;
-			room.updateMatrix(coordinate, 1);
-		}
-		else
-		{
-			clientRecv = room.client1;
-			room.updateMatrix(coordinate, 2);
-		}
-		Send(clientRecv, opcode, buff);
-
-		switch (room.isEndGame(coordinate))
-		{
-		case 0:
-			break;
-		case 1:
-			Send(player->s, RESULT, player->username);
-			Send(clientRecv, RESULT, player->username);
-			updateScoreOfPlayer(player->username, 1);
-			removeRoom(player->s);
-			break;
-		case 2:
-			Send(player->s, RESULT, "");
-			Send(clientRecv, RESULT, "");
-			break;
-		default:
-			break;
-		}
+	if (strcmp((char*)getUserChallenge(usernameRecv).c_str(), player->username) == 0) {
+		updateUserChallenge(usernameRecv, "");
+		Send(s, opcode, player->username);
+		Send(player->s, opcode, "");
+		//change isFree
+		updateUserIsFree(player->username, 0);
+		updateUserIsFree(usernameRecv, 0);
+		//add room
+		Room room = Room(s, player->s);
+		listRooms.push_back(room);
 	}
 	else
 	{
-		if (room.client1 == player->s) {
-			clientRecv = room.client2;
+		Send(player->s, REFUSE, "");
+	}
+	
+}
+
+void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
+	char *userChall = (char*)getUserChallenge(usernameRecv).c_str();
+	if (strcmp(userChall, usernameSend) == 0) {
+		updateUserChallenge(usernameRecv, "");
+		SOCKET s1 = getSocket(usernameRecv);
+		Send(s1, opcode, usernameSend);
+	}
+}
+
+void sendCoordinates(Player *player, char *opcode, char *payload) {
+	Room room = getRoom(player->s);
+	SOCKET clientRecv;
+
+	if (room.client1) {
+		if (strlen(payload) > 0) {
+			Coordinates coordinate = getCoordinates(payload);
+			if (room.client1 == player->s) {
+				clientRecv = room.client2;
+				room.updateMatrix(coordinate, 1);
+			}
+			else
+			{
+				clientRecv = room.client1;
+				room.updateMatrix(coordinate, 2);
+			}
+			Send(clientRecv, opcode, payload);
+			UserLogin userRecv = getUserLoginBySocket(clientRecv);
+
+			switch (room.isEndGame(coordinate))
+			{
+			case 0:
+				break;
+			case 1:
+				Send(clientRecv, RESULT, player->username);
+				Send(player->s, "h", player->username);
+				Send(player->s, RESULT, player->username);
+				updateScoreOfPlayer(player->username, 1);
+				updateUserIsFree(player->username, 1);
+				updateUserIsFree(userRecv.username, 1);
+				removeRoom(player->s);
+				updateRank();
+				break;
+			case 2:
+				Send(player->s, RESULT, "");
+				Send(clientRecv, RESULT, "");
+				break;
+			default:
+				break;
+			}
 		}
 		else
 		{
-			clientRecv = room.client1;
+			if (room.client1 == player->s) {
+				clientRecv = room.client2;
+			}
+			else
+			{
+				clientRecv = room.client1;
+			}
+			UserLogin playerWin = getUserLoginBySocket(clientRecv);
+			Send(clientRecv, RESULT, playerWin.username);
+			updateScoreOfPlayer(playerWin.username, 1);
+			updateUserIsFree(player->username, 1);
+			updateUserIsFree(playerWin.username, 1);
+			removeRoom(player->s);
+			updateRank();
 		}
-		UserLogin playerWin = getUserLogin(clientRecv);
-		Send(player->s, RESULT, playerWin.username);
-		Send(clientRecv, RESULT, playerWin.username);
 	}
-	
 }
 
 void removeRoom(SOCKET s) {

@@ -62,6 +62,7 @@ int Send(SOCKET, char *, char *);
 void handleDataReceive(Player *, package);
 void convertIntToChar(int value, char des[]);
 
+void cancelChallenge(Player *player);
 void login(Player *, package);
 int logout(Player *);
 void giveUp(Player *);

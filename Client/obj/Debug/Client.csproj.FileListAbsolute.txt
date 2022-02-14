@@ -14,10 +14,10 @@
 D:\caro_game\x64\Debug\Client.exe.config
 D:\caro_game\x64\Debug\Client.exe
 D:\caro_game\x64\Debug\Client.pdb
-D:\caro_game\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
 D:\caro_game\Client\obj\Debug\Client.FormPlay.resources
 D:\caro_game\Client\obj\Debug\Client.FormStart.resources
 D:\caro_game\Client\obj\Debug\Client.Properties.Resources.resources
 D:\caro_game\Client\obj\Debug\Client.csproj.GenerateResource.Cache
 D:\caro_game\Client\obj\Debug\Client.exe
 D:\caro_game\Client\obj\Debug\Client.pdb
+D:\caro_game\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache

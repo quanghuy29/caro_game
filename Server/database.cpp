@@ -128,6 +128,50 @@ void updateUserIsFree(char *username, int isFree) {
 	disconnectDB();
 }
 
+void updateUserChallenge(char *username, char *usernameChallenge) {
+	string SQLQuery;
+	if (strlen(usernameChallenge) > 0) {
+		SQLQuery = "UPDATE information SET userChallenge='" + string(usernameChallenge) + "' WHERE username='" + string(username) + "'";
+	}
+	else
+	{
+		SQLQuery = "UPDATE information SET userChallenge=NULL WHERE username='" + string(username) + "'";
+	}
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+		}
+	}
+	disconnectDB();
+}
+
+string getUserChallenge(char *username) {
+	char userChallenge[30];
+	string resutlUserChallenge = "";
+	string SQLQuery = "SELECT userChallenge FROM information WHERE username='" + string(username) + "'";
+	if (connectDB()) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
+		{
+			// Executes a preparable statement
+			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
+			disconnectDB();
+			return 0;
+		}
+		else
+		{
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &userChallenge, sizeof(userChallenge), NULL);
+				resutlUserChallenge = resutlUserChallenge + userChallenge;
+			}
+		}
+	}
+	disconnectDB();
+	return resutlUserChallenge;
+}
+
 int getRank(char *username) {
 	int rank;
 	string SQLQuery = "SELECT rank FROM information WHERE username='" + string(username) + "'";
@@ -152,7 +196,7 @@ int getRank(char *username) {
 
 int getStatusFree(char *username) {
 	int isFree, status;
-	string SQLQuery = "SELECT rank, status FROM information WHERE username='" + string(username) + "'";
+	string SQLQuery = "SELECT isFree, status FROM information WHERE username='" + string(username) + "'";
 	if (connectDB()) {
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))
 		{
@@ -285,7 +329,7 @@ void updateRank() {
 
 string getAllPlayer(char *username) {
 	string resutlAllPlayer = "";
-	string SQLQuery = "SELECT username FROM information WHERE status=1 AND username NOT IN ('" + string(username) + "')";
+	string SQLQuery = "SELECT username FROM information WHERE status=1 AND isFree=1 AND username NOT IN ('" + string(username) + "')";
 	if (connectDB()) {
 		char user[30];
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS))

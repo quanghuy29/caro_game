@@ -27,6 +27,13 @@ void Room::addClient(SOCKET clientFirst, SOCKET clientSecond) {
 
 void Room::updateMatrix(Coordinates coordinates, int value) {
 	matrixRoom[coordinates.y][coordinates.x] = value;
+	printf("\n");
+	for (int i = 0; i < CHESS_HEIGHT; i++) {
+		for (int j = 0; j < CHESS_WIDTH; j++) {
+			printf("%d ", matrixRoom[i][j]);
+		}
+		printf("\n");
+	}
 }
 
 int Room::isEndGame(Coordinates coordinates) {
