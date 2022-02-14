@@ -314,7 +314,7 @@ void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
 
 void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
 	char *userChall = (char*)getUserChallenge(usernameRecv).c_str();
-	if (strcmp(userChall, usernameSend) == 0) {
+	if (strcmp((char*)getUserChallenge(usernameRecv).c_str(), usernameSend) == 0) {
 		updateUserChallenge(usernameRecv, "");
 		SOCKET s1 = getSocket(usernameRecv);
 		Send(s1, opcode, usernameSend);
@@ -326,7 +326,7 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 	SOCKET clientRecv;
 
 	if (room.client1) {
-		if (strlen(payload) > 0) {
+		if (strlen(payload) > 1) {
 			Coordinates coordinate = getCoordinates(payload);
 			if (room.client1 == player->s) {
 				clientRecv = room.client2;
@@ -362,7 +362,7 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 				break;
 			}
 		}
-		else
+		if (strlen(payload) == 1)
 		{
 			if (room.client1 == player->s) {
 				clientRecv = room.client2;
@@ -373,6 +373,24 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 			}
 			UserLogin playerWin = getUserLoginBySocket(clientRecv);
 			Send(clientRecv, RESULT, playerWin.username);
+			updateScoreOfPlayer(playerWin.username, 1);
+			updateUserIsFree(player->username, 1);
+			updateUserIsFree(playerWin.username, 1);
+			removeRoom(player->s);
+			updateRank();
+		}
+		else if (strlen(payload) == 0)
+		{
+			if (room.client1 == player->s) {
+				clientRecv = room.client2;
+			}
+			else
+			{
+				clientRecv = room.client1;
+			}
+			UserLogin playerWin = getUserLoginBySocket(clientRecv);
+			Send(clientRecv, RESULT, playerWin.username);
+			Send(player->s, RESULT, playerWin.username);
 			updateScoreOfPlayer(playerWin.username, 1);
 			updateUserIsFree(player->username, 1);
 			updateUserIsFree(playerWin.username, 1);
