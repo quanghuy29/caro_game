@@ -79,8 +79,8 @@ namespace Client
             };
             
             this.Player = new List<Player>() {
-                new Player(this.NamePlayer[0].Text, Image.FromFile("D:\\Caro_client\\Client\\bin\\Debug\\imagine\\x.png")),
-                new Player(this.NamePlayer[1].Text, Image.FromFile("D:\\Caro_client\\Client\\bin\\Debug\\imagine\\o.png"))
+                new Player(this.NamePlayer[0].Text, Image.FromFile("\\imagine\\x.png")),
+                new Player(this.NamePlayer[1].Text, Image.FromFile("\\imagine\\o.png"))
             };
 
             this.eventManager = eventManager;
