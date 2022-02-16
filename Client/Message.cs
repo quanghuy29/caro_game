@@ -60,6 +60,8 @@ namespace Client
             this.Payload = message.Remove(0, Cons.OPCODE_SIZE + Cons.LENGTH_SIZE);
         }
 
+        //@funtion convertToString: convertthe message object to string
+        //@return result
         public string convertToString() {
             string result = this.Opcode + this.Length + this.Payload;
             return result;

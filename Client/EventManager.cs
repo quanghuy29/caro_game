@@ -70,16 +70,23 @@ namespace Client
             }
         }
 
+        //@funtion notifLogin: notify the login result to the event object when receiving a message
+        //@param result: result
         public void notifLogin(int result) {
             if (_login != null)
                 _login(this, new SuperEventArgs(result));
         }
 
+        //@funtion notifRespone: notify the respond of other player to the event objecct when receiving a message
+        //@param code: opcode of the meassage
+        //@param name: name of the other player
         public void notifRespone(int code, string name) {
             if (_respone != null)
                 _respone(this, new SuperEventArgs(code, name));
         }
 
+        //@funtion notifMove: notify the move of opponent to the event objecct when receiving a message
+        //@param move: string containing position of the move
         public void notifMove(string move) {
             if (_move != null)
             {
@@ -88,16 +95,22 @@ namespace Client
                
         }
 
+        //@funtion notifResult: notify the result of the game to the event object
+        //@param name: name of the winner 
         public void notifResult(string name) {
             if (_result != null)
                 _result(this, new SuperEventArgs(name));
         }
 
+        //@funtion notifInvite: notify the challenger received
+        //@param name: name of player challenging you
         public void notifInvite(string name) {
             if (_invite != null)
                 _invite(this, new SuperEventArgs(name));
         }
 
+        //@funtion notifList: notify the list player to event object
+        //@param listname: string containing the list
         public void notifList(string listname) {
             if (_list != null)
                 _list(this, new SuperEventArgs(listname));

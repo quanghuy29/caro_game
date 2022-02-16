@@ -72,8 +72,10 @@ namespace Client
             this.client = client;
             this.eventManager = eventManager;
             
-        }        
+        }
 
+        //@funtion initPanelChallenge: init the panel challenge
+        //@param panelchallenge
         public void initPanelChallenge(Panel panelchallenge) {
             ButtonEnter = new Button()
             {
@@ -95,18 +97,24 @@ namespace Client
             ButtonCancel.Click += ButtonCancel_Click;
         }
 
+        //@funtion showPanelChallenge: show the panel challenge
+        //@param panelchallenge
         public void showPanelChallenge(Panel panelchallenge) {
             panelchallenge.Visible = true;
         }
 
+        //@funtion hidePanelChallenge: hide the panel challenger
+        //@param panelchallenge
         public void hidePanelChallenge(Panel panelchallenge) {
             panelchallenge.Visible = false;
         }
 
+        //@funtion clearOtherName: clear the name in the text box challenger
         public void clearOtherName() {
             NamePlayer[1].Text = "";
         }
 
+        //@funtion ButtonEnter_Click: send challenger message to server
         private void ButtonEnter_Click(object sender, EventArgs e) {                      
             string name = NamePlayer[1].Text;
 
@@ -117,6 +125,7 @@ namespace Client
             ButtonCancel.Visible = true;   
         }
 
+        //@funtion ButtonCancel_Click: cancel the invitation
         private void ButtonCancel_Click(object sender, EventArgs e) {
             string name = NamePlayer[1].Text;
 

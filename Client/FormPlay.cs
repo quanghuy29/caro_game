@@ -43,6 +43,7 @@ namespace Client
             client.ListenThread(eventManager);                    
         }
 
+        //@funtion EventManager_Result: show the result of the game when finishing
         private void EventManager_Result(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(()=>{
                 if (String.Compare(e.ReturnText, namePlayer1.Text) == 0)
@@ -64,6 +65,7 @@ namespace Client
             this.Close();
         }
 
+        //@funtion surrenderButton_Click: send the surrender message to server
         private void surrenderButton_Click(object sender, EventArgs e) {
             DialogResult dialogResult = MessageBox.Show("Do you want to surrender?", "Question", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
@@ -74,11 +76,13 @@ namespace Client
             }         
         }
 
+        //@funtion FormPlay_FormClosing: show the form to make sure that you really want to quit the game
         private void FormPlay_FormClosing(object sender, FormClosingEventArgs e) {
             if (MessageBox.Show("If exit, you'll lose. You want to exit?", "Warning", MessageBoxButtons.OKCancel) != System.Windows.Forms.DialogResult.OK)
                 e.Cancel = true;                
         }
 
+        //@funtion FormPlay_FormClosed: send to server that player quited the game
         private void FormPlay_FormClosed(object sender, FormClosedEventArgs e) {            
             Message mess = new Message(Cons.MOVE, Cons.CANCEL.Length.ToString(Cons.SAMPLE_0000), "1");
             client.sendData(mess.convertToString());
