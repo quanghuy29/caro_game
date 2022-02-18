@@ -15,6 +15,8 @@ namespace Client
     {
         Socket client;
 
+        //@funtion connectServer: connect to server
+        //@return true if success, false if false
         public bool connectServer() {
             IPEndPoint iep = new IPEndPoint(IPAddress.Parse(Cons.IP), Cons.port);
             client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -30,17 +32,23 @@ namespace Client
             }
         }
 
+        //@funtion closeSocket: close the socket
         public void closeSocket() {
             if (client == null) return;
             client.Close();
         }
 
+        //@funtion sendData: send data to server
+        //@param data
+        //@return ret: length of data 
         public int sendData(string data) {
             var sendBuffer = Encoding.ASCII.GetBytes(data);
             int ret = client.Send(sendBuffer);
             return ret;
         }
 
+        //@funtion receiveData: receive data from server
+        //@return revBuff: buffer containing the data
         private string receiveData() {
             string rcvBuff;
             int size;
@@ -64,6 +72,8 @@ namespace Client
             return rcvBuff;
         }
 
+        //@funtion Listen: listen message from data
+        //@param eventManager: event object that will notify to system when received a message
         private void Listen(EventManager eventManager) {
             try
             {
@@ -74,6 +84,8 @@ namespace Client
              catch { }    
         }
 
+        //@funtion ListenThread: create a thread to listen from server
+        //@param eventManager: event object that will notify to system when received a message
         public void ListenThread(EventManager eventManager) {
             Thread listenThread = new Thread(() =>
             {
@@ -83,11 +95,15 @@ namespace Client
             listenThread.Start();
         }
 
+        //@funtion processData: process data received
+        //@param mess: message received
+        //@param eventManager: event object that will notify to system when received a message
         private void processData(string mess, EventManager eventManager) {
             Message rcvMess = new Message(mess);
 
             int opcode = Convert.ToInt32(rcvMess.Opcode);
             string payload = rcvMess.Payload;
+            //MessageBox.Show(mess);
             switch (opcode)
             {
                 case (int)Cons.command.LOGIN:

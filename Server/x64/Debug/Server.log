@@ -1,20 +1,9 @@
-﻿  Server.cpp
-  Room.cpp
-  myServerLib.cpp
-d:\caro_game\server\myserverlib.cpp(41): warning C4267: 'initializing': conversion from 'size_t' to 'long', possible loss of data
-d:\caro_game\server\myserverlib.cpp(82): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
-d:\caro_game\server\myserverlib.cpp(71): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int (__cdecl *)(void)'
-d:\caro_game\server\myserverlib.cpp(71): warning C4313: 'printf': '%d' in format string conflicts with argument 1 of type 'int (__cdecl *)(void)'
-d:\caro_game\server\myserverlib.cpp(36): warning C4101: 'buffReturn': unreferenced local variable
-d:\caro_game\server\myserverlib.cpp(120): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
-d:\caro_game\server\myserverlib.cpp(127): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
-d:\caro_game\server\myserverlib.cpp(134): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int (__cdecl *)(void)'
-d:\caro_game\server\myserverlib.cpp(134): warning C4313: 'printf': '%d' in format string conflicts with argument 1 of type 'int (__cdecl *)(void)'
-  database.cpp
-  Generating Code...
-d:\caro_game\server\database.cpp(130): warning C4715: 'userLogin': not all control paths return a value
-d:\caro_game\server\myserverlib.cpp(263): warning C4715: 'getRoom': not all control paths return a value
-d:\caro_game\server\myserverlib.cpp(278): warning C4715: 'getUserLoginBySocket': not all control paths return a value
-d:\caro_game\server\myserverlib.cpp(309): warning C4715: 'getSocket': not all control paths return a value
-  Server.vcxproj -> D:\caro_game\x64\Debug\Server.exe
-  Server.vcxproj -> D:\caro_game\x64\Debug\Server.pdb (Full PDB)
+﻿Build started 2/16/2022 10:19:44 PM.
+     1>Project "\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Server\Server.vcxproj" on node 3 (Build target(s)).
+     1>Link:
+         Server.vcxproj -> \\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\x64\Debug\Server.exe
+     1>Done Building Project "\\vmware-host\Shared Folders\Desktop\Tài liệu 20211\Lập trình mạng\Bai tap tuan\Caro_game\caro_game\Server\Server.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.34

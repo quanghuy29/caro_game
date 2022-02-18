@@ -79,16 +79,20 @@ namespace Client
             };
             
             this.Player = new List<Player>() {
-                new Player(this.NamePlayer[0].Text, Image.FromFile("D:\\Caro_client\\Client\\bin\\Debug\\imagine\\x.png")),
-                new Player(this.NamePlayer[1].Text, Image.FromFile("D:\\Caro_client\\Client\\bin\\Debug\\imagine\\o.png"))
+                new Player(this.NamePlayer[0].Text, Image.FromFile("\\imagine\\x.png")),
+                new Player(this.NamePlayer[1].Text, Image.FromFile("\\imagine\\o.png"))
             };
 
             this.eventManager = eventManager;
             this.eventManager.Move += EventManager_Move;
+
             CurrentPlayer = 0;
             NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
         }
 
+        //@function getChessPoint: get a point from a button clicked
+        //@param btn: the button
+        //@return point: the point need to be got 
         public Point getChessPoint(Button btn) {
             int x = Convert.ToInt32(btn.Tag.ToString().Substring(0, Cons.LOCATION_SIZE));
             int y = Convert.ToInt32(btn.Tag.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
@@ -96,6 +100,9 @@ namespace Client
             return point;
         }
 
+        //@function getChessPoint: get a point with position being from string
+        //@param btn: string containing the position
+        //@return point: the poing need to be got
         public Point getChessPoint(String btn) {
             int x = Convert.ToInt32(btn.ToString().Substring(0, Cons.LOCATION_SIZE));
             int y = Convert.ToInt32(btn.ToString().Substring(Cons.LOCATION_SIZE, Cons.LOCATION_SIZE));
@@ -103,6 +110,8 @@ namespace Client
             return point;
         }
 
+        //@function drawBoard: draw the chess board in a panel
+        //@param boardChess: the panel 
         public void drawBoard(Panel boardChess) {
             boardChess.Enabled = true;
             boardChess.Controls.Clear();
@@ -133,10 +142,13 @@ namespace Client
             }
         }
 
+        //@function Mark: mark a position with x or o when player take a move
+        //@param btn: the button containing the position
         private void Mark(Button btn) {
             btn.BackgroundImage = Player[CurrentPlayer].Mark;
         }
 
+        //@funtion changePlayer: change turn game
         private void changPlayer() {
             NamePlayer[CurrentPlayer].BackColor = Color.White;
 
@@ -144,6 +156,7 @@ namespace Client
             NamePlayer[CurrentPlayer].BackColor = Color.FromArgb(100, 214, 179);
         }
 
+        //@funtion EventManager_Move: show the move from the opponent
         private void EventManager_Move(object sender, SuperEventArgs e) {
             chessBoard.Enabled = true;
             Point point = getChessPoint(e.ReturnText);
@@ -156,6 +169,7 @@ namespace Client
             changPlayer();
         }
 
+        //@funtiom Btn_Click: send the move of player to the opponent
         private void Btn_Click(object sender, EventArgs e) {
             Button btn = sender as Button;
             if (btn.BackgroundImage != null)

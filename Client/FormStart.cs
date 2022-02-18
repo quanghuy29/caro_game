@@ -38,6 +38,7 @@ namespace Client
             buttonReloadList.Enabled = false;           
         }
 
+        //@funtion exitButton_Click: exit the program
         private void exitButton_Click(object sender, EventArgs e) {
             try
             {
@@ -50,6 +51,7 @@ namespace Client
             }
         }
 
+        //@funtion loginButton_Click: send the login message to server
         private void loginButton_Click(object sender, EventArgs e) {
             if (!String.IsNullOrEmpty(userNameBox.Text))
             {
@@ -77,6 +79,7 @@ namespace Client
             }
         }
 
+        //@funtion logoutButton_Click: send the logout message to server
         private void logoutButton_Click(object sender, EventArgs e) {
             DialogResult dialogResult = MessageBox.Show("Do you want to log out?", "Question", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
@@ -88,6 +91,7 @@ namespace Client
             }
         }
 
+        //@funtion buttonReloadList_Click: send the message that want to reload list free player to server
         private void buttonReloadList_Click(object sender, EventArgs e) {
             Message mess = new Message(Cons.LIST, Cons.SAMPLE_0000, "");
             client.sendData(mess.convertToString());
@@ -96,6 +100,7 @@ namespace Client
             buttonReloadList.Enabled = false;
         }
 
+        //@funtion EventManager_Login: show the login result to player
         private void EventManager_Login(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
@@ -122,6 +127,7 @@ namespace Client
             }));
         }
 
+        //@funtion EventManager_Respone: show to respond of other players after sending a challenger
         private void EventManager_Respone(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
@@ -191,6 +197,7 @@ namespace Client
             }));
         }
 
+        //@funtion EventManager_Invite: show the invitation from other player
         private void EventManager_Invite(object sender, SuperEventArgs e) {
             this.Invoke((MethodInvoker)(() =>
             {
@@ -212,6 +219,7 @@ namespace Client
             }));
         }
 
+        //@funtion EventManager_List: show the list free player 
         private void EventManager_List(object sender, SuperEventArgs e) {
             string listname = e.ReturnText;
 
