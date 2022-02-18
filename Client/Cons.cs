@@ -8,9 +8,9 @@ namespace Client
 {
     public class Cons
     {
-        public static int BUTTON_WIDTH = 110;
-        public static int BUTTON_HEIGHT = 110;
-        public static int BOARD_SIZE = 3;
+        public static int BUTTON_WIDTH = 20;
+        public static int BUTTON_HEIGHT = 20;
+        public static int BOARD_SIZE = 16;
 
         public static int OPCODE_SIZE = 1;
         public static int LENGTH_SIZE = 4;
