@@ -5,6 +5,12 @@
 vector<Room> listRooms;
 vector<UserLogin> listUserLogin;
 
+/* function convertIntToChar: convert int to array char
+
+@param value: number want to convert
+@param des: array char contains results
+*/
+
 void convertIntToChar(int value, char des[]) {
 	for (int i = 3; i > -1; i--) {
 		des[i] = value % 10 + 48;
@@ -13,17 +19,16 @@ void convertIntToChar(int value, char des[]) {
 	des[4] = 0;
 }
 
-/* function Receive: receive data of length lenData
+/* function Receive: receive data from player
 
-@param s: socket use to receive data
+@param s: a truct player have socket use to receive data
 @param dataIn: A pointer to a string to save data
-@param dataOut: A pointer to a string to a complete message
+@param mess: A pointer to a struct package to a complete message
 
 Returns
 0 on error
 1 if message not process out of
 2 if the message has been processed
-
 */
 
 int Receive(Player s, char *dataIn, package *mess) {
@@ -101,11 +106,11 @@ int Receive(Player s, char *dataIn, package *mess) {
 
 /* function Send: send data
 
-@param s: a struct clientConnect have socket use to send data
-@param dataIn: A pointer to a string to send data
+@param s: socket use to send data
+@param opcode: A pointer to a string opcode
+@param dataIn: A pointer to a string data to send 
 
 Returns 0 on error and 1 on success
-
 */
 
 int Send(SOCKET s, char *opcode, char *dataIn) {
@@ -135,11 +140,10 @@ int Send(SOCKET s, char *opcode, char *dataIn) {
 	return 1;
 }
 
-/* function processDataReceive: process received data
+/* function handleDataReceive: handle data receive
 
-@param dataIn: A pointer to a string to received data
-@param filePath: A pointer to a string to file path
-
+@param player: A pointer to a struct player
+@param mess: A pointer to a struct package constain data 
 */
 
 void handleDataReceive(Player *player, package mess) {
@@ -179,9 +183,20 @@ void handleDataReceive(Player *player, package mess) {
 	}
 }
 
+/* function cancelChallenge: cancel challenge of user
+
+@param player: A pointer to a struct player who want to cancel your challenge
+*/
+
 void cancelChallenge(Player *player) {
 	updateUserChallenge(player->username, "");
 }
+
+/* function login: handle login request of user
+
+@param player: A pointer to a struct player want to login
+@param mess: A pointer to a struct package constain data
+*/
 
 void login(Player *player, package mess) {
 	if (player->isLogin == 1) Send(player->s, "1", "1");
@@ -202,6 +217,14 @@ void login(Player *player, package mess) {
 	}
 }
 
+/* function logout: handle logout request of user
+
+@param player: A pointer to a struct player want to login
+@param mess: A pointer to a struct package constain data
+
+Returns 0 on success and 1 on fail
+*/
+
 int logout(Player *player) {
 	if (player->isLogin == 1) {
 		player->isLogin = 0;
@@ -214,16 +237,22 @@ int logout(Player *player) {
 	else return 1;
 }
 
-/*
-void giveUp(Player *player) {
-	Room room = getRoom(player->s);
+/* function getListUser: handle request get list user in free 
 
-}
+@param username: A pointer to a string user want to get list user in free
+@param payload: A pointer to a string data result
 */
 
 void getListUser(char *username, char *payload) {
 	payload = (char*)getAllPlayer(username).c_str();
 }
+
+/* function getRoom: get room in list by socket
+
+@param s: socket use to get room in list room
+
+Returns a struct room 
+*/
 
 Room getRoom(SOCKET client) {
 	for (int i = 0; i < listRooms.size(); i++)
@@ -233,6 +262,13 @@ Room getRoom(SOCKET client) {
 	}
 }
 
+/* function getUserLoginBySocket: get struct UserLogin by socket
+
+@param s: socket use to get struct UserLogin
+
+Returns a struct UserLogin
+*/
+
 UserLogin getUserLoginBySocket(SOCKET client) {
 	for (int i = 0; i < listUserLogin.size(); i++) {
 		if (listUserLogin[i].s == client) {
@@ -240,6 +276,13 @@ UserLogin getUserLoginBySocket(SOCKET client) {
 		}
 	}
 }
+
+/* function getUserLoginByName: get index user in list user login by username
+
+@param username: A pointer to username
+
+Returns -1 on not found and index of user on found
+*/
 
 int getUserLoginByName(char *username) {
 	for (int i = 0; i < listUserLogin.size(); i++) {
@@ -250,6 +293,13 @@ int getUserLoginByName(char *username) {
 	return -1;
 }
 
+/* function getSocket: get socket of user by name
+
+@param username: A pointer to username
+
+Returns socket found
+*/
+
 SOCKET getSocket(char *username) {
 	for (int i = 0; i < listUserLogin.size(); i++) {
 		if (strcmp(listUserLogin[i].username, username) == 0) {
@@ -258,6 +308,13 @@ SOCKET getSocket(char *username) {
 	}
 }
 
+/* function getCoordinates: get coordinates from data
+
+@param data: A pointer to a string data
+
+Returns a struct Coordinates
+*/
+
 Coordinates getCoordinates(char *data) {
 	char x[3], y[3];
 	strncpy(y, data + 0, 2);
@@ -265,6 +322,13 @@ Coordinates getCoordinates(char *data) {
 	Coordinates coordinates(atoi(x), atoi(y));
 	return coordinates;
 }
+
+/* function sendChallenge: send challenge from player to challenged person
+
+@param player: A pointer to a struct player
+@param usernameRecv: A pointer to username receive
+@param opcode: A pointer to a message code
+*/
 
 void sendChallenge(Player *player, char *usernameRecv, char *opcode) {
 	int index;
@@ -292,6 +356,13 @@ void sendChallenge(Player *player, char *usernameRecv, char *opcode) {
 	
 }
 
+/* function receiveChallenge: receive challenge
+
+@param player: A pointer to a struct player
+@param usernameRecv: A pointer to username receive
+@param opcode: A pointer to a message code
+*/
+
 void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
 	SOCKET s = getSocket(usernameRecv);
 	if (strcmp((char*)getUserChallenge(usernameRecv).c_str(), player->username) == 0) {
@@ -312,6 +383,13 @@ void receiveChallenge(Player *player, char *usernameRecv, char *opcode) {
 	
 }
 
+/* function refuseChallenge: refuse challenge
+
+@param usernameSend: A pointer to username send
+@param usernameRecv: A pointer to username receive
+@param opcode: A pointer to a message code
+*/
+
 void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
 	char *userChall = (char*)getUserChallenge(usernameRecv).c_str();
 	if (strcmp((char*)getUserChallenge(usernameRecv).c_str(), usernameSend) == 0) {
@@ -320,6 +398,13 @@ void refuseChallenge(char *usernameSend, char *usernameRecv, char *opcode) {
 		Send(s1, opcode, usernameSend);
 	}
 }
+
+/* function sendCoordinates: send coordinates
+
+@param player: A pointer to a struct player
+@param opcode: A pointer to a message code
+@param payload: A pointer to string data constain coordinates
+*/
 
 void sendCoordinates(Player *player, char *opcode, char *payload) {
 	Room room = getRoom(player->s);
@@ -349,6 +434,7 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 				Send(player->s, "h", player->username);
 				Send(player->s, RESULT, player->username);
 				updateScoreOfPlayer(player->username, 1);
+				updateScoreOfPlayer(userRecv.username, 0);
 				updateUserIsFree(player->username, 1);
 				updateUserIsFree(userRecv.username, 1);
 				removeRoom(player->s);
@@ -374,6 +460,7 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 			UserLogin playerWin = getUserLoginBySocket(clientRecv);
 			Send(clientRecv, RESULT, playerWin.username);
 			updateScoreOfPlayer(playerWin.username, 1);
+			updateScoreOfPlayer(player->username, 0);
 			updateUserIsFree(player->username, 1);
 			updateUserIsFree(playerWin.username, 1);
 			removeRoom(player->s);
@@ -392,6 +479,7 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 			Send(clientRecv, RESULT, playerWin.username);
 			Send(player->s, RESULT, playerWin.username);
 			updateScoreOfPlayer(playerWin.username, 1);
+			updateScoreOfPlayer(player->username, 0);
 			updateUserIsFree(player->username, 1);
 			updateUserIsFree(playerWin.username, 1);
 			removeRoom(player->s);
@@ -399,6 +487,11 @@ void sendCoordinates(Player *player, char *opcode, char *payload) {
 		}
 	}
 }
+
+/* function removeRoom: remove room from list room
+
+@param s: socket in the room want to delete
+*/
 
 void removeRoom(SOCKET s) {
 	int index = -1;
@@ -412,6 +505,11 @@ void removeRoom(SOCKET s) {
 		listRooms.erase(listRooms.begin() + index);
 	}
 }
+
+/* function removeUser: remove user from list user login when user logout
+
+@param s: socket of the user want to delete
+*/
 
 void removeUser(SOCKET s) {
 	int index = -1;

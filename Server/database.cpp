@@ -5,10 +5,14 @@ SQLHANDLE SQLEnvHandle = NULL;
 SQLHANDLE SQLConnectionHandle = NULL;
 SQLHANDLE SQLStatementHandle = NULL;
 
+/* function connectDB: connect to database 
+
+Returns true if connect successful, false if connect fail
+*/
+
 bool connectDB() {
 	SQLRETURN retCode = 0;
 	bool rsConn = false;
-
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
 			// Allocates the environment
@@ -64,6 +68,8 @@ bool connectDB() {
 	return rsConn;
 }
 
+//function disconnectDB: disconnect to database
+
 void disconnectDB() {
 	// Frees the resources and disconnects
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
@@ -71,6 +77,17 @@ void disconnectDB() {
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 }
+
+/* function userLogin: login to account
+
+@param username: username of user
+@param password: password of user
+
+Returns:400 when the user is not found
+		10 when login successful
+		11 when user logged
+		12 when incorrect password
+*/
 
 int userLogin(char *username, char *password) {
 	string SQLQuery = "SELECT password, status FROM information WHERE username='" + string(username) + "'";
@@ -90,19 +107,16 @@ int userLogin(char *username, char *password) {
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &pass, sizeof(pass), NULL);
 				SQLGetData(SQLStatementHandle, 2, SQL_C_ULONG, &status, 0, NULL);
 			}
-			int ret = strcmp(pass, "");
-			if (strcmp(pass, "") == 0) {
-				disconnectDB();
-				return 11;
-			}
+			//incorrect password
 			if (strcmp(pass, password) != 0) {
 				disconnectDB();
-				return 14;
+				return 12;
 			}
 			else {
+				//user logged
 				if (status == 1) {
 					disconnectDB();
-					return 12;
+					return 11;
 				}
 				else {
 					updateUserStatus(username, 1);
@@ -114,6 +128,12 @@ int userLogin(char *username, char *password) {
 	}
 	
 }
+
+/* function updateUserIsFree: update status free of user
+
+@param username: username of user
+@param isFree: status free of user
+*/
 
 void updateUserIsFree(char *username, int isFree) {
 	string SQLQuery = "UPDATE information SET isFree=" + to_string(isFree) + " WHERE username='" + string(username) + "'";
@@ -127,6 +147,12 @@ void updateUserIsFree(char *username, int isFree) {
 	}
 	disconnectDB();
 }
+
+/* function updateUserChallenge: update challenged person of user
+
+@param username: username of user
+@param usernameChallenge: username of challenged person 
+*/
 
 void updateUserChallenge(char *username, char *usernameChallenge) {
 	string SQLQuery;
@@ -147,6 +173,13 @@ void updateUserChallenge(char *username, char *usernameChallenge) {
 	}
 	disconnectDB();
 }
+
+/* function getUserChallenge: get challenged person of user
+
+@param username: username of user
+
+Return username of challenged person
+*/
 
 string getUserChallenge(char *username) {
 	char userChallenge[30];
@@ -172,6 +205,13 @@ string getUserChallenge(char *username) {
 	return resutlUserChallenge;
 }
 
+/* function getRank: get rank of user
+
+@param username: username of user
+
+Return rank of user
+*/
+
 int getRank(char *username) {
 	int rank;
 	string SQLQuery = "SELECT rank FROM information WHERE username='" + string(username) + "'";
@@ -193,6 +233,13 @@ int getRank(char *username) {
 	disconnectDB();
 	return rank;
 }
+
+/* function getStatusFree: get status free of user
+
+@param username: username of user
+
+Return status free of user
+*/
 
 int getStatusFree(char *username) {
 	int isFree, status;
@@ -217,6 +264,13 @@ int getStatusFree(char *username) {
 	return (isFree && status);
 }
 
+/* function getScore: get score of user
+
+@param username: username of user
+
+Return score of user
+*/
+
 int getScore(char *username) {
 	int score;
 	string SQLQuery = "SELECT score FROM information WHERE username='" + string(username) + "'";
@@ -239,7 +293,11 @@ int getScore(char *username) {
 	return (score);
 }
 
-//bool setUser(playerInfo* user) {}
+/* function updateUserStatus: update status of user
+
+@param username: username of user
+@param status: status of user
+*/
 
 void updateUserStatus(char *username, int status) {
 	string SQLQuery = "UPDATE information SET status=" + to_string(status) + " WHERE username='" + string(username) + "'";
@@ -252,6 +310,12 @@ void updateUserStatus(char *username, int status) {
 	}
 	disconnectDB();
 }
+
+/* function updateScoreOfPlayer: update score of user
+
+@param username: username of user
+@param win: chess game results of user
+*/
 
 void updateScoreOfPlayer(char *username, int win) {
 	int score = getScore(username);
@@ -276,6 +340,8 @@ void updateScoreOfPlayer(char *username, int win) {
 		disconnectDB();
 	}
 }
+
+//function updateRank: update rank of all user
 
 void updateRank() {
 	int rank = 1;
@@ -327,6 +393,13 @@ void updateRank() {
 	disconnectDB();
 }
 
+/* function getAllPlayer: get all user logged and is in free state 
+
+@param username: username of user
+
+Return string list username of user logged and is in free state 
+*/
+
 string getAllPlayer(char *username) {
 	string resutlAllPlayer = "";
 	string SQLQuery = "SELECT username FROM information WHERE status=1 AND isFree=1 AND username NOT IN ('" + string(username) + "')";
@@ -348,6 +421,8 @@ string getAllPlayer(char *username) {
 	disconnectDB();
 	return resutlAllPlayer;
 }
+
+// function showSQLError: show SQL error
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 {

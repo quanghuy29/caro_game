@@ -88,7 +88,6 @@ namespace Client
 
             int opcode = Convert.ToInt32(rcvMess.Opcode);
             string payload = rcvMess.Payload;
-            MessageBox.Show(mess);
             switch (opcode)
             {
                 case (int)Cons.command.LOGIN:

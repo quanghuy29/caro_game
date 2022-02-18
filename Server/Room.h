@@ -2,9 +2,9 @@
 #ifndef _ROOM_
 #define _ROOM_
 #include "server.h"
-#define CHESS_WIDTH 8
-#define CHESS_HEIGHT 10
-#define CHESS_WIN 3
+#define CHESS_WIDTH 18
+#define CHESS_HEIGHT 18
+#define CHESS_WIN 5
 
 struct Coordinates {
 	int x;
@@ -25,7 +25,6 @@ public:
 
 	Room(SOCKET clientFirst, SOCKET clientSecond);
 	int ** createMatrix();
-	void addClient(SOCKET clientFirst, SOCKET clientSecond);
 	void updateMatrix(Coordinates coordinates, int value);
 	int isEndGame(Coordinates coordinates);
 	bool isEndByHorizontal(Coordinates coordinates);
