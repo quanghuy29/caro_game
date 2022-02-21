@@ -114,6 +114,11 @@ namespace Client
             NamePlayer[1].Text = "";
         }
 
+        public void hideCancelButton() {
+            ButtonEnter.Visible = true;
+            ButtonCancel.Visible = false;
+        }
+        
         //@funtion ButtonEnter_Click: send challenger message to server
         private void ButtonEnter_Click(object sender, EventArgs e) {                      
             string name = NamePlayer[1].Text;
@@ -132,8 +137,7 @@ namespace Client
             Message mess = new Message(Cons.CANCEL, name.Length.ToString(Cons.SAMPLE_0000), name);
             client.sendData(mess.convertToString());
 
-            ButtonEnter.Visible = true;
-            ButtonCancel.Visible = false;
+            hideCancelButton();
         }
     }
 }
