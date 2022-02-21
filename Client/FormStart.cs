@@ -193,6 +193,7 @@ namespace Client
                         MessageBox.Show("Can't play with player has too high or too low rank!");
                     else if ((String.Compare(e.ReturnText, Cons.PL_NOT_FOUND.ToString()) == 0))
                         MessageBox.Show("Not found player!");
+                    startView.hideCancelButton();
                 }
             }));
         }
